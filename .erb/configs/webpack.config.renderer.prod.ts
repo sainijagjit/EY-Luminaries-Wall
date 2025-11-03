@@ -109,6 +109,11 @@ const configuration: webpack.Configuration = {
           },
         },
       },
+      // Audio loading
+      {
+        test: /\.(mp3|wav|m4a|aac|oga)$/i,
+        type: 'asset/resource',
+      },
     ],
   },
 

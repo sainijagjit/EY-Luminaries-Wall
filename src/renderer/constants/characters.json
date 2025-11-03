@@ -11,8 +11,8 @@
     "id": 2,
     "name": "Satya Nadella",
     "image": "2.png",
-    "width": 281,
-    "height": 503,
+    "width": 240,
+    "height": 415,
     "description": "I, Satya Nadella, it is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
   },
   {
@@ -20,55 +20,55 @@
     "name": "Arthur Young",
     "image": "3.png",
     "width": 247,
-    "height": 427,
+    "height": 415,
     "description": "I, Arthur Young, it is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
   },
   {
     "id": 4,
     "name": "Marie Curie",
     "image": "4.png",
-    "width": 318,
-    "height": 529,
+    "width": 247,
+    "height": 415,
     "description": "I, Marie Curie, it is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
   },
   {
     "id": 5,
     "name": "Albert Einstein",
     "image": "5.png",
-    "width": 370,
-    "height": 554,
+    "width": 343,
+    "height": 415,
     "description": "I, Albert Einstein, it is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
   },
   {
     "id": 6,
     "name": "Thomas Edison",
     "image": "6.png",
-    "width": 285,
-    "height": 484,
+    "width": 262,
+    "height": 415,
     "description": "I, Thomas Edison, it is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
   },
   {
     "id": 7,
     "name": "Alexander Hamilton",
     "image": "7.png",
-    "width": 344,
-    "height": 507,
+    "width": 282,
+    "height": 415,
     "description": "I, Alexander Hamilton, it is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
   },
   {
     "id": 8,
     "name": "Jensen Huang",
     "image": "8.png",
-    "width": 274,
-    "height": 536,
+    "width": 214,
+    "height": 415,
     "description": "I, Jensen Huang, it is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
   },
   {
     "id": 9,
     "name": "Jennifer Doudna",
     "image": "9.png",
-    "width": 366,
-    "height": 523,
+    "width": 285,
+    "height": 415,
     "description": "I, Jennifer Doudna, it is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
   }
 ]
