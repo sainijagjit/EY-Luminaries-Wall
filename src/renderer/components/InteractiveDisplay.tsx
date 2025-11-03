@@ -68,7 +68,7 @@ interface InteractiveDisplayProps {
 function InteractiveDisplay({
   onReturnToScreenSaver,
 }: InteractiveDisplayProps) {
-  const [selectedFigure, setSelectedFigure] = useState<number | null>(null);
+  const [selectedFigure, setSelectedFigure] = useState<number | null>(0);
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
   const scaleWrapperRef = useRef<HTMLDivElement | null>(null);
   const figuresRowRef = useRef<HTMLDivElement | null>(null);
