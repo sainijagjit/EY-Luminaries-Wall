@@ -6,14 +6,15 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transform-origin: center bottom;
 }
 
 .figure-container:hover {
-  transform: scale(1.05);
+  transform: scale(1.2);
 }
 
 .figure-container.selected {
-  transform: scale(1.15);
+  transform: scale(1.3);
   z-index: 10;
 }
 
