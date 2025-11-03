@@ -175,8 +175,8 @@
     "webpack-merge": "^6.0.1"
   },
   "build": {
-    "productName": "EY Interactive Display",
-    "appId": "org.ey.InteractiveDisplay",
+    "productName": "EY Luminaries Wall",
+    "appId": "org.ey.LuminariesWall",
     "asar": true,
     "afterSign": ".erb/scripts/notarize.js",
     "asarUnpack": "**\\*.{node,dll}",

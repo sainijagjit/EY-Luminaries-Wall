@@ -25,6 +25,9 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
+// Ensure media autoplay works without user gesture (helps on Windows)
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
