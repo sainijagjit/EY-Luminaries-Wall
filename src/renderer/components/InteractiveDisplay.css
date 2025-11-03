@@ -1,0 +1,152 @@
+.interactive-display {
+  width: 100%;
+  height: 100%;
+  background: #f7f7f5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+.particles-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 1;
+  mix-blend-mode: normal;
+  filter: none;
+  pointer-events: none;
+}
+
+.logo-container {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  z-index: 10;
+}
+
+.ey-logo {
+  width: clamp(200px, 25vw, 720px);
+  height: auto;
+  object-fit: contain;
+}
+
+.content-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.figures-scale-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  transform-origin: bottom center;
+}
+
+.bio-text {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 10;
+  color: #2d2d2d;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(18px, 2vw, 32px);
+  line-height: 1.6;
+  padding: 0;
+  background: transparent;
+  animation: fadeIn 0.5s ease;
+  text-align: center;
+  max-width: min(1424px, 90vw);
+  width: auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.figures-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: clamp(16px, 4vw, 80px);
+  width: 100%;
+  margin-top: auto;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  padding: 16px 24px;
+}
+
+@media (min-width: 1600px) {
+  .figures-container {
+    gap: clamp(64px, 8vw, 200px);
+  }
+}
+
+@media (min-width: 2200px) {
+  .figures-container {
+    gap: clamp(96px, 10vw, 260px);
+  }
+}
+
+.figure-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+}
+
+.figure-group .figure-container {
+  margin-left: -15px;
+}
+
+.figure-group .figure-container:first-child {
+  margin-left: 0;
+}
+
+.group-1 {
+  z-index: 3;
+}
+
+.group-2 {
+  z-index: 2;
+}
+
+.group-3 {
+  z-index: 1;
+}
+
+.figure-1,
+.figure-2,
+.figure-3,
+.figure-4,
+.figure-5,
+.figure-6,
+.figure-7,
+.figure-8,
+.figure-9 {
+  margin: 0;
+}

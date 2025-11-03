@@ -1,0 +1,59 @@
+.figure-container {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.figure-container:hover {
+  transform: scale(1.05);
+}
+
+.figure-container.selected {
+  transform: scale(1.15);
+  z-index: 10;
+}
+
+.figure-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  transition: filter 0.3s ease;
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+.figure-image.grayscale {
+  filter: grayscale(100%);
+}
+
+.figure-image.colored {
+  filter: grayscale(0%);
+}
+
+.figure-outline {
+  position: absolute;
+  inset: -2px;
+  border: none;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.figure-outline.animate {
+  animation: pulse-outline 2s ease-in-out infinite;
+}
+
+@keyframes pulse-outline {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(0, 0, 0, 0);
+  }
+}
