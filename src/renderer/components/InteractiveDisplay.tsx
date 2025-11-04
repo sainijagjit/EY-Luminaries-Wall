@@ -79,7 +79,11 @@ interface InteractiveDisplayProps {
 function InteractiveDisplay({
   onReturnToScreenSaver,
 }: InteractiveDisplayProps) {
-  const [selectedFigure, setSelectedFigure] = useState<number | null>(null);
+  const [selectedBySection, setSelectedBySection] = useState<{
+    left: number | null;
+    middle: number | null;
+    right: number | null;
+  }>({ left: null, middle: null, right: null });
   const [hoveredFigure, setHoveredFigure] = useState<number | null>(null);
   const [showFigures, setShowFigures] = useState(false);
   const [visibleSections, setVisibleSections] = useState({
@@ -88,6 +92,11 @@ function InteractiveDisplay({
     right: false,
   });
   const [presenceDetected, setPresenceDetected] = useState(false);
+  const [sectionAnchors, setSectionAnchors] = useState<{
+    left: { x: number; yTop: number; height: number };
+    middle: { x: number; yTop: number; height: number };
+    right: { x: number; yTop: number; height: number };
+  } | null>(null);
   let inactivityTimerRef: NodeJS.Timeout | null = null;
 
   const baseMetrics = useMemo(() => {
@@ -102,7 +111,7 @@ function InteractiveDisplay({
     }
 
     inactivityTimerRef = setTimeout(() => {
-      setSelectedFigure(null);
+      setSelectedBySection({ left: null, middle: null, right: null });
       onReturnToScreenSaver();
     }, INACTIVITY_TIMEOUT);
   };
@@ -149,7 +158,12 @@ function InteractiveDisplay({
   }, [onReturnToScreenSaver, presenceDetected]);
 
   const handleFigureClick = (index: number) => {
-    setSelectedFigure(index === selectedFigure ? null : index);
+    const section = index < 3 ? 'left' : index < 6 ? 'middle' : 'right';
+    setSelectedBySection((prev) => ({
+      ...prev,
+      [section]:
+        prev[section as 'left' | 'middle' | 'right'] === index ? null : index,
+    }));
     resetInactivityTimer();
   };
 
@@ -157,30 +171,88 @@ function InteractiveDisplay({
 
   return (
     <div
-      className={`interactive-display ${presenceDetected && selectedFigure === null ? 'guidance' : ''}`}
+      className={`interactive-display ${
+        presenceDetected &&
+        selectedBySection.left === null &&
+        selectedBySection.middle === null &&
+        selectedBySection.right === null
+          ? 'guidance'
+          : ''
+      }`}
     >
       <BackgroundVideo src={particlesVideo} className="particles-background" />
-      <BackgroundAudio src={bgMusic} volume={0.08} />
+      {/* <BackgroundAudio src={bgMusic} volume={0.08} /> */}
       <div
         className={`logo-container ${presenceDetected ? 'top-left' : 'centered'}`}
       >
         <Logo src={eyLogo} className="ey-logo" />
       </div>
-      {selectedFigure !== null && (
+      {selectedBySection.left !== null && sectionAnchors && (
         <BioText
-          name={FIGURE_DATA[selectedFigure].name}
-          description={FIGURE_DATA[selectedFigure].description}
+          name={FIGURE_DATA[selectedBySection.left].name}
+          description={FIGURE_DATA[selectedBySection.left].description}
+          style={{
+            left: sectionAnchors.left.x,
+            top:
+              sectionAnchors.left.yTop -
+              Math.round(
+                Math.max(120, Math.min(260, sectionAnchors.left.height * 0.4)),
+              ),
+            transform: 'translate(-50%, -100%)',
+          }}
+        />
+      )}
+      {selectedBySection.middle !== null && sectionAnchors && (
+        <BioText
+          name={FIGURE_DATA[selectedBySection.middle].name}
+          description={FIGURE_DATA[selectedBySection.middle].description}
+          style={{
+            left: sectionAnchors.middle.x,
+            top:
+              sectionAnchors.middle.yTop -
+              Math.round(
+                Math.max(
+                  110,
+                  Math.min(240, sectionAnchors.middle.height * 0.35),
+                ),
+              ),
+            transform: 'translate(-50%, -100%)',
+          }}
+        />
+      )}
+      {selectedBySection.right !== null && sectionAnchors && (
+        <BioText
+          name={FIGURE_DATA[selectedBySection.right].name}
+          description={FIGURE_DATA[selectedBySection.right].description}
+          style={{
+            left: sectionAnchors.right.x,
+            top:
+              sectionAnchors.right.yTop -
+              Math.round(
+                Math.max(120, Math.min(260, sectionAnchors.right.height * 0.4)),
+              ),
+            transform: 'translate(-50%, -100%)',
+          }}
         />
       )}
       {showFigures && (
         <div className="content-container">
           <FiguresRow
             figures={FIGURE_DATA}
-            selectedIndex={selectedFigure}
+            selectedSet={
+              new Set(
+                [
+                  selectedBySection.left,
+                  selectedBySection.middle,
+                  selectedBySection.right,
+                ].filter((v): v is number => v !== null),
+              )
+            }
             hoveredIndex={hoveredFigure}
             onHover={setHoveredFigure}
             onClickFigure={handleFigureClick}
             visibleSections={visibleSections}
+            onSectionsLayout={setSectionAnchors}
           />
         </div>
       )}

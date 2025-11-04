@@ -25,7 +25,7 @@
 
 .logo-container {
   position: absolute;
-  z-index: 10;
+  z-index: 100;
   display: flex;
   flex-direction: column;
   transition:
@@ -81,32 +81,64 @@
 
 .bio-text {
   position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, 0);
-  z-index: 10;
-  color: #2d2d2d;
+  z-index: 40;
+  color: #1f1f1f;
   font-family: 'Inter', sans-serif;
-  font-size: clamp(18px, 2vw, 32px);
+  font-size: 20px;
   line-height: 1.6;
-  padding: 0;
-  background: transparent;
+  padding: 20px 24px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(6px);
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
   animation: fadeIn 0.5s ease;
-  text-align: center;
-  max-width: min(1424px, 90vw);
+  text-align: left;
+  max-width: min(560px, 38vw);
   width: auto;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
+@media (max-height: 900px) {
+  .bio-left {
+    top: 28%;
+  }
+  .bio-middle {
+    top: 8%;
+  }
+  .bio-right {
+    top: 28%;
+  }
+}
+
+.bio-left {
+  top: auto;
+  bottom: 32%;
+  left: 12%;
+  z-index: 60;
+}
+
+.bio-middle {
+  top: auto;
+  bottom: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+}
+
+.bio-right {
+  top: auto;
+  bottom: 32%;
+  right: 12%;
+  z-index: 55;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translate(-50%, -20px);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, 0);
   }
 }
 

@@ -3,7 +3,7 @@ import FigureGroup, { NormalizedFigure } from './FigureGroup';
 
 type FiguresRowProps = {
   figures: NormalizedFigure[];
-  selectedIndex: number | null;
+  selectedSet: Set<number>;
   hoveredIndex: number | null;
   onHover: (index: number | null) => void;
   onClickFigure: (index: number) => void;
@@ -12,15 +12,21 @@ type FiguresRowProps = {
     middle: boolean;
     right: boolean;
   };
+  onSectionsLayout?: (anchors: {
+    left: { x: number; yTop: number; height: number };
+    middle: { x: number; yTop: number; height: number };
+    right: { x: number; yTop: number; height: number };
+  }) => void;
 };
 
 export default function FiguresRow({
   figures,
-  selectedIndex,
+  selectedSet,
   hoveredIndex,
   onHover,
   onClickFigure,
   visibleSections,
+  onSectionsLayout,
 }: FiguresRowProps) {
   const baseMetrics = useMemo(() => {
     const totalWidth = figures.reduce((sum, f) => sum + f.width, 0);
@@ -58,6 +64,45 @@ export default function FiguresRow({
     return () => window.removeEventListener('resize', recalc);
   }, [baseMetrics]);
 
+  const leftRef = useRef<HTMLDivElement | null>(null);
+  const middleRef = useRef<HTMLDivElement | null>(null);
+  const rightRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (!onSectionsLayout) return;
+      const leftEl = leftRef.current;
+      const midEl = middleRef.current;
+      const rightEl = rightRef.current;
+      const wrapper = scaleWrapperRef.current;
+      if (!leftEl || !midEl || !rightEl || !wrapper) return;
+      const wrapperRect = wrapper.getBoundingClientRect();
+      const lr = leftEl.getBoundingClientRect();
+      const mr = midEl.getBoundingClientRect();
+      const rr = rightEl.getBoundingClientRect();
+      onSectionsLayout({
+        left: {
+          x: lr.left + lr.width / 2 - wrapperRect.left,
+          yTop: lr.top - wrapperRect.top,
+          height: lr.height,
+        },
+        middle: {
+          x: mr.left + mr.width / 2 - wrapperRect.left,
+          yTop: mr.top - wrapperRect.top,
+          height: mr.height,
+        },
+        right: {
+          x: rr.left + rr.width / 2 - wrapperRect.left,
+          yTop: rr.top - wrapperRect.top,
+          height: rr.height,
+        },
+      });
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [visibleSections, onSectionsLayout]);
+
   return (
     <div
       className="figures-scale-wrapper"
@@ -66,12 +111,13 @@ export default function FiguresRow({
     >
       <div className="figures-container">
         <div
+          ref={leftRef}
           className={`figure-section left ${visibleSections.left ? 'visible' : 'hidden'}`}
         >
           <FigureGroup
             figures={figures.slice(0, 3)}
             offset={0}
-            selectedIndex={selectedIndex}
+            selectedSet={selectedSet}
             hoveredIndex={hoveredIndex}
             onHover={onHover}
             onClickFigure={onClickFigure}
@@ -79,12 +125,13 @@ export default function FiguresRow({
           />
         </div>
         <div
+          ref={middleRef}
           className={`figure-section middle ${visibleSections.middle ? 'visible' : 'hidden'}`}
         >
           <FigureGroup
             figures={figures.slice(3, 6)}
             offset={3}
-            selectedIndex={selectedIndex}
+            selectedSet={selectedSet}
             hoveredIndex={hoveredIndex}
             onHover={onHover}
             onClickFigure={onClickFigure}
@@ -92,12 +139,13 @@ export default function FiguresRow({
           />
         </div>
         <div
+          ref={rightRef}
           className={`figure-section right ${visibleSections.right ? 'visible' : 'hidden'}`}
         >
           <FigureGroup
             figures={figures.slice(6, 9)}
             offset={6}
-            selectedIndex={selectedIndex}
+            selectedSet={selectedSet}
             hoveredIndex={hoveredIndex}
             onHover={onHover}
             onClickFigure={onClickFigure}

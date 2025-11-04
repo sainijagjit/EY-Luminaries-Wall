@@ -1,4 +1,5 @@
 import Figure from './Figure';
+import React from 'react';
 
 export type NormalizedFigure = {
   id: number;
@@ -12,29 +13,29 @@ export type NormalizedFigure = {
 type FigureGroupProps = {
   figures: NormalizedFigure[];
   offset: number;
-  selectedIndex: number | null;
+  selectedSet: Set<number>;
   hoveredIndex: number | null;
   onHover: (index: number | null) => void;
   onClickFigure: (index: number) => void;
   groupClassName: string;
 };
 
-export default function FigureGroup({
+const FigureGroup: React.FC<FigureGroupProps> = ({
   figures,
   offset,
-  selectedIndex,
+  selectedSet,
   hoveredIndex,
   onHover,
   onClickFigure,
   groupClassName,
-}: FigureGroupProps) {
-  const activeIndex = hoveredIndex !== null ? hoveredIndex : selectedIndex;
+}) => {
+  const activeIndex = hoveredIndex !== null ? hoveredIndex : null;
   return (
     <div className={`figure-group ${groupClassName}`}>
       {figures.map((figure, index) => {
         const globalIndex = offset + index;
         const isHovered = hoveredIndex === globalIndex;
-        const isSelected = selectedIndex === globalIndex;
+        const isSelected = selectedSet.has(globalIndex);
         const isDimmed =
           !isSelected && activeIndex !== null && activeIndex !== globalIndex;
         return (
@@ -56,4 +57,6 @@ export default function FigureGroup({
       })}
     </div>
   );
-}
+};
+
+export default FigureGroup;
