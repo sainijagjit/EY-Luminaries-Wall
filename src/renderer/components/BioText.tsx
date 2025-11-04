@@ -1,7 +1,11 @@
+import React from 'react';
+
 type BioTextProps = {
   name: string;
   description: string;
+  // eslint-disable-next-line react/require-default-props
   position?: 'left' | 'middle' | 'right';
+  // eslint-disable-next-line react/require-default-props
   style?: React.CSSProperties;
 };
 
@@ -11,25 +15,24 @@ export default function BioText({
   position,
   style,
 }: BioTextProps) {
-  const pos = description.indexOf(name);
-  if (pos >= 0) {
-    return (
-      <div
-        className={`bio-text ${position ? `bio-${position}` : ''}`}
-        style={style}
-      >
-        {description.slice(0, pos)}
-        <strong>{name}</strong>
-        {description.slice(pos + name.length)}
-      </div>
-    );
-  }
+  // Split the description by name (case-insensitive)
+  const parts = description.split(new RegExp(`(${name})`, 'gi'));
+
   return (
     <div
       className={`bio-text ${position ? `bio-${position}` : ''}`}
       style={style}
     >
-      {description}
+      <strong>{name}</strong> —{' '}
+      {parts.map((part, index) =>
+        part.toLowerCase() === name.toLowerCase() ? (
+          // eslint-disable-next-line react/no-array-index-key
+          <strong key={index}>{part}</strong>
+        ) : (
+          // eslint-disable-next-line react/no-array-index-key
+          <span key={index}>{part}</span>
+        ),
+      )}
     </div>
   );
 }
