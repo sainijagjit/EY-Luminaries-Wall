@@ -34,9 +34,9 @@ export default function FigureGroup({
       {figures.map((figure, index) => {
         const globalIndex = offset + index;
         const isHovered = hoveredIndex === globalIndex;
-        const isSelected =
-          hoveredIndex === null && selectedIndex === globalIndex;
-        const isDimmed = activeIndex !== null && activeIndex !== globalIndex;
+        const isSelected = selectedIndex === globalIndex;
+        const isDimmed =
+          !isSelected && activeIndex !== null && activeIndex !== globalIndex;
         return (
           <Figure
             key={globalIndex}

@@ -2,11 +2,9 @@ import './ScreenSaver.css';
 import screenSaverVideo from '../../../assets/ScreenSaver.mp4';
 import particlesVideo from '../../../assets/Particles_loop.webm';
 
-interface ScreenSaverProps {
-  onStart: () => void;
-}
+interface ScreenSaverProps {}
 
-function ScreenSaver({ onStart }: ScreenSaverProps) {
+function ScreenSaver({}: ScreenSaverProps) {
   return (
     <div className="screen-saver">
       <video
@@ -25,9 +23,6 @@ function ScreenSaver({ onStart }: ScreenSaverProps) {
         muted
         playsInline
       />
-      <button type="button" className="touch-to-start" onClick={onStart}>
-        Touch to Start
-      </button>
     </div>
   );
 }

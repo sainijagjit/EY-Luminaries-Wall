@@ -1,17 +1,21 @@
 .figure-container {
   position: relative;
   cursor: pointer;
-  transition: transform 220ms ease;
+  transition:
+    box-shadow 260ms ease,
+    transform 260ms ease;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   transform-origin: center bottom;
+  will-change: box-shadow, transform;
 }
 
 .figure-container.hovered {
-  transform: scale(1.2);
+  transform: none;
   z-index: 20;
+  box-shadow: none;
 }
 
 .figure-container.selected {
@@ -50,16 +54,27 @@
   pointer-events: none;
 }
 
-.figure-outline.animate {
-  animation: pulse-outline 2s ease-in-out infinite;
+.interactive-display.guidance
+  .figure-container:not(.hovered):not(.selected)
+  .figure-outline {
+  animation: none;
 }
 
-@keyframes pulse-outline {
+.figure-container.hovered:not(.selected) .figure-outline {
+  box-shadow: none;
+}
+
+.figure-container.selected .figure-outline {
+  animation: none;
+  box-shadow: none;
+}
+
+@keyframes glow-pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 0 0 rgba(255, 212, 0, 0);
   }
   50% {
-    box-shadow: 0 0 0 8px rgba(0, 0, 0, 0);
+    box-shadow: 0 0 24px 0 rgba(255, 212, 0, 0.45);
   }
 }

@@ -17,7 +17,7 @@ import jensenHuang from '../../../assets/Jensen Huang.png';
 import jenniferDoudna from '../../../assets/Jennifer Doudna.png';
 import particlesVideo from '../../../assets/Particles_loop.mp4';
 import eyLogo from '../../../assets/EY_Logo 1.png';
-import bgMusic from '../../../assets/Mozart-Piano-Concerto_BG-Track.mp3';
+import bgMusic from '../../../assets/Satie-Trois Gymnopedies.mp3';
 import characters from '../constants/characters.json';
 
 const INACTIVITY_TIMEOUT = 5 * 60 * 1000;
@@ -79,8 +79,15 @@ interface InteractiveDisplayProps {
 function InteractiveDisplay({
   onReturnToScreenSaver,
 }: InteractiveDisplayProps) {
-  const [selectedFigure, setSelectedFigure] = useState<number | null>(0);
+  const [selectedFigure, setSelectedFigure] = useState<number | null>(null);
   const [hoveredFigure, setHoveredFigure] = useState<number | null>(null);
+  const [showFigures, setShowFigures] = useState(false);
+  const [visibleSections, setVisibleSections] = useState({
+    middle: false,
+    left: false,
+    right: false,
+  });
+  const [presenceDetected, setPresenceDetected] = useState(false);
   let inactivityTimerRef: NodeJS.Timeout | null = null;
 
   const baseMetrics = useMemo(() => {
@@ -101,9 +108,27 @@ function InteractiveDisplay({
   };
 
   useEffect(() => {
-    resetInactivityTimer();
+    const detectPresence = () => {
+      if (!presenceDetected) {
+        setPresenceDetected(true);
+        setShowFigures(true);
+
+        setTimeout(() => {
+          setVisibleSections((prev) => ({ ...prev, middle: true }));
+        }, 300);
+
+        setTimeout(() => {
+          setVisibleSections((prev) => ({ ...prev, left: true }));
+        }, 800);
+
+        setTimeout(() => {
+          setVisibleSections((prev) => ({ ...prev, right: true }));
+        }, 1300);
+      }
+    };
 
     const handleActivity = () => {
+      detectPresence();
       resetInactivityTimer();
     };
 
@@ -121,7 +146,7 @@ function InteractiveDisplay({
         clearTimeout(inactivityTimerRef);
       }
     };
-  }, [onReturnToScreenSaver]);
+  }, [onReturnToScreenSaver, presenceDetected]);
 
   const handleFigureClick = (index: number) => {
     setSelectedFigure(index === selectedFigure ? null : index);
@@ -131,10 +156,14 @@ function InteractiveDisplay({
   // scaling handled inside FiguresRow
 
   return (
-    <div className="interactive-display">
+    <div
+      className={`interactive-display ${presenceDetected && selectedFigure === null ? 'guidance' : ''}`}
+    >
       <BackgroundVideo src={particlesVideo} className="particles-background" />
       <BackgroundAudio src={bgMusic} volume={0.08} />
-      <div className="logo-container">
+      <div
+        className={`logo-container ${presenceDetected ? 'top-left' : 'centered'}`}
+      >
         <Logo src={eyLogo} className="ey-logo" />
       </div>
       {selectedFigure !== null && (
@@ -143,15 +172,18 @@ function InteractiveDisplay({
           description={FIGURE_DATA[selectedFigure].description}
         />
       )}
-      <div className="content-container">
-        <FiguresRow
-          figures={FIGURE_DATA}
-          selectedIndex={selectedFigure}
-          hoveredIndex={hoveredFigure}
-          onHover={setHoveredFigure}
-          onClickFigure={handleFigureClick}
-        />
-      </div>
+      {showFigures && (
+        <div className="content-container">
+          <FiguresRow
+            figures={FIGURE_DATA}
+            selectedIndex={selectedFigure}
+            hoveredIndex={hoveredFigure}
+            onHover={setHoveredFigure}
+            onClickFigure={handleFigureClick}
+            visibleSections={visibleSections}
+          />
+        </div>
+      )}
     </div>
   );
 }

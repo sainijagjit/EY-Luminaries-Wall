@@ -46,7 +46,7 @@ function Figure({
       <img
         src={imagePath}
         alt={`Figure ${id}`}
-        className={`figure-image ${isSelected || isHovered ? 'colored' : 'grayscale'}`}
+        className={`figure-image ${isSelected ? 'colored' : 'grayscale'}`}
         width={width}
         height={height}
       />

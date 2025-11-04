@@ -7,6 +7,11 @@ type FiguresRowProps = {
   hoveredIndex: number | null;
   onHover: (index: number | null) => void;
   onClickFigure: (index: number) => void;
+  visibleSections: {
+    left: boolean;
+    middle: boolean;
+    right: boolean;
+  };
 };
 
 export default function FiguresRow({
@@ -15,6 +20,7 @@ export default function FiguresRow({
   hoveredIndex,
   onHover,
   onClickFigure,
+  visibleSections,
 }: FiguresRowProps) {
   const baseMetrics = useMemo(() => {
     const totalWidth = figures.reduce((sum, f) => sum + f.width, 0);
@@ -59,33 +65,45 @@ export default function FiguresRow({
       style={{ transform: `scale(${scale})` }}
     >
       <div className="figures-container">
-        <FigureGroup
-          figures={figures.slice(0, 3)}
-          offset={0}
-          selectedIndex={selectedIndex}
-          hoveredIndex={hoveredIndex}
-          onHover={onHover}
-          onClickFigure={onClickFigure}
-          groupClassName="group-1"
-        />
-        <FigureGroup
-          figures={figures.slice(3, 6)}
-          offset={3}
-          selectedIndex={selectedIndex}
-          hoveredIndex={hoveredIndex}
-          onHover={onHover}
-          onClickFigure={onClickFigure}
-          groupClassName="group-2"
-        />
-        <FigureGroup
-          figures={figures.slice(6, 9)}
-          offset={6}
-          selectedIndex={selectedIndex}
-          hoveredIndex={hoveredIndex}
-          onHover={onHover}
-          onClickFigure={onClickFigure}
-          groupClassName="group-3"
-        />
+        <div
+          className={`figure-section left ${visibleSections.left ? 'visible' : 'hidden'}`}
+        >
+          <FigureGroup
+            figures={figures.slice(0, 3)}
+            offset={0}
+            selectedIndex={selectedIndex}
+            hoveredIndex={hoveredIndex}
+            onHover={onHover}
+            onClickFigure={onClickFigure}
+            groupClassName="group-1"
+          />
+        </div>
+        <div
+          className={`figure-section middle ${visibleSections.middle ? 'visible' : 'hidden'}`}
+        >
+          <FigureGroup
+            figures={figures.slice(3, 6)}
+            offset={3}
+            selectedIndex={selectedIndex}
+            hoveredIndex={hoveredIndex}
+            onHover={onHover}
+            onClickFigure={onClickFigure}
+            groupClassName="group-2"
+          />
+        </div>
+        <div
+          className={`figure-section right ${visibleSections.right ? 'visible' : 'hidden'}`}
+        >
+          <FigureGroup
+            figures={figures.slice(6, 9)}
+            offset={6}
+            selectedIndex={selectedIndex}
+            hoveredIndex={hoveredIndex}
+            onHover={onHover}
+            onClickFigure={onClickFigure}
+            groupClassName="group-3"
+          />
+        </div>
       </div>
     </div>
   );
