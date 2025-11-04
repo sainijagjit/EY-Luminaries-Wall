@@ -1,7 +1,7 @@
 .home-container {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  width: 3840px;
+  height: 1200px;
+  overflow: auto;
   display: flex;
   align-items: center;
   justify-content: center;
