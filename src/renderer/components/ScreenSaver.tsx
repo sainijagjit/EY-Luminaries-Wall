@@ -1,5 +1,5 @@
 import './ScreenSaver.css';
-import screenSaverVideo from '../../../assets/ScreenSaver.mp4';
+// import screenSaverVideo from '../../../assets/ScreenSaver.mp4';
 import particlesVideo from '../../../assets/Particles_loop.webm';
 
 interface ScreenSaverProps {}
@@ -9,7 +9,7 @@ function ScreenSaver({}: ScreenSaverProps) {
     <div className="screen-saver">
       <video
         className="screen-saver-video"
-        src={screenSaverVideo}
+        // src={screenSaverVideo}
         autoPlay
         loop
         muted

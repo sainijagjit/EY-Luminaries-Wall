@@ -47,7 +47,7 @@ function Figure({
       }}
     >
       <div className="figure-outline" />
-      {/* {isHovered && glowVideoPath ? (
+      {isHovered && glowVideoPath && !isSelected ? (
         <video
           className="figure-glow-video overlay-video"
           src={glowVideoPath}
@@ -62,7 +62,7 @@ function Figure({
             backgroundColor: 'transparent',
           }}
         />
-      ) : null} */}
+      ) : null}
       <img
         src={imagePath}
         alt={`Figure ${id}`}

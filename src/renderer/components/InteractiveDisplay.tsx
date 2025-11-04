@@ -20,17 +20,17 @@ import eyLogo from '../../../assets/EY_Logo 1.png';
 import bgMusic from '../../../assets/Satie-Trois Gymnopedies.mp3';
 import characters from '../constants/characters.json';
 
-import alwinErnstGlow from '../../../assets/glowing-chars/Alwin C Ernst.mp4';
-import satyaNadellaGlow from '../../../assets/glowing-chars/Satya Nadella.mp4';
-import arthurYoungGlow from '../../../assets/glowing-chars/Arthur Young.mp4';
-import marieCurieGlow from '../../../assets/glowing-chars/Marie Curie.mp4';
-import albertEinsteinGlow from '../../../assets/glowing-chars/Albert Einstein.mp4';
-import thomasEdisonGlow from '../../../assets/glowing-chars/Thomas Edison.mp4';
-import alexanderHamiltonGlow from '../../../assets/glowing-chars/Alexander Hamilton.mp4';
-import jensenHuangGlow from '../../../assets/glowing-chars/Jensen Huang.mp4';
-import jenniferDoudnaGlow from '../../../assets/glowing-chars/Jennifer Doudna.mp4';
+import alwinErnstGlow from '../../../assets/glowing-chars/AlwinCErnst.webm';
+import satyaNadellaGlow from '../../../assets/glowing-chars/SatyaNadella.webm';
+import arthurYoungGlow from '../../../assets/glowing-chars/ArthurYoung.webm';
+import marieCurieGlow from '../../../assets/glowing-chars/MarieCurie.webm';
+import albertEinsteinGlow from '../../../assets/glowing-chars/AlbertEinstein.webm';
+import thomasEdisonGlow from '../../../assets/glowing-chars/ThomasEdison.webm';
+import alexanderHamiltonGlow from '../../../assets/glowing-chars/AlexanderHamilton.webm';
+import jensenHuangGlow from '../../../assets/glowing-chars/JensenHuang.webm';
+import jenniferDoudnaGlow from '../../../assets/glowing-chars/JenniferDoudna.webm';
 
-const INACTIVITY_TIMEOUT = 5 * 60 * 1000;
+const INACTIVITY_TIMEOUT = 60 * 1000;
 const GLOW_HINT_DURATION_MS = 3000;
 const GLOW_HINT_COOLDOWN_MS = 8000;
 
@@ -212,11 +212,13 @@ function InteractiveDisplay({
 
   const handleFigureClick = (index: number) => {
     const section = index < 3 ? 'left' : index < 6 ? 'middle' : 'right';
-    setSelectedBySection((prev) => ({
-      ...prev,
-      [section]:
-        prev[section as 'left' | 'middle' | 'right'] === index ? null : index,
-    }));
+    setSelectedBySection((prev) => {
+      const key = section as 'left' | 'middle' | 'right';
+      // Do not toggle off when tapping the same figure; keep it visible until another
+      // figure in the same section is selected.
+      if (prev[key] === index) return prev;
+      return { ...prev, [key]: index };
+    });
     resetInactivityTimer();
   };
 

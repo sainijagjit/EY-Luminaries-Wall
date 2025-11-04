@@ -89,5 +89,5 @@ a:hover {
 * {
   scrollbar-width: thin;
   scrollbar-color: #333333 transparent;
-  border-radius: 50px;
+  /* border-radius: 50px; */
 }
