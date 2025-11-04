@@ -3,6 +3,7 @@ import './Figure.css';
 interface FigureProps {
   id: number;
   imagePath: string;
+  glowVideoPath?: string;
   isSelected: boolean;
   isHovered: boolean;
   isDimmed: boolean;
@@ -12,11 +13,13 @@ interface FigureProps {
   width: number;
   height: number;
   className?: string;
+  showGlowHint?: boolean;
 }
 
 function Figure({
   id,
   imagePath,
+  glowVideoPath,
   isSelected,
   isHovered,
   isDimmed,
@@ -26,10 +29,11 @@ function Figure({
   width,
   height,
   className,
+  showGlowHint,
 }: FigureProps) {
   return (
     <div
-      className={`figure-container ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''} ${isDimmed ? 'dimmed' : ''} ${className || ''}`}
+      className={`figure-container video-overlay-container ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''} ${isDimmed ? 'dimmed' : ''} ${className || ''}`}
       onClick={onClick}
       role="button"
       tabIndex={0}
@@ -43,6 +47,22 @@ function Figure({
       }}
     >
       <div className="figure-outline" />
+      {/* {isHovered && glowVideoPath ? (
+        <video
+          className="figure-glow-video overlay-video"
+          src={glowVideoPath}
+          autoPlay
+          muted
+          playsInline
+          loop
+          style={{
+            mixBlendMode: 'plus-lighter',
+            transform: 'translateZ(0)',
+            backfaceVisibility: 'hidden',
+            backgroundColor: 'transparent',
+          }}
+        />
+      ) : null} */}
       <img
         src={imagePath}
         alt={`Figure ${id}`}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import BackgroundVideo from './BackgroundVideo';
 import BackgroundAudio from './BackgroundAudio';
 import Logo from './Logo';
@@ -20,7 +20,19 @@ import eyLogo from '../../../assets/EY_Logo 1.png';
 import bgMusic from '../../../assets/Satie-Trois Gymnopedies.mp3';
 import characters from '../constants/characters.json';
 
+import alwinErnstGlow from '../../../assets/glowing-chars/Alwin C Ernst.mp4';
+import satyaNadellaGlow from '../../../assets/glowing-chars/Satya Nadella.mp4';
+import arthurYoungGlow from '../../../assets/glowing-chars/Arthur Young.mp4';
+import marieCurieGlow from '../../../assets/glowing-chars/Marie Curie.mp4';
+import albertEinsteinGlow from '../../../assets/glowing-chars/Albert Einstein.mp4';
+import thomasEdisonGlow from '../../../assets/glowing-chars/Thomas Edison.mp4';
+import alexanderHamiltonGlow from '../../../assets/glowing-chars/Alexander Hamilton.mp4';
+import jensenHuangGlow from '../../../assets/glowing-chars/Jensen Huang.mp4';
+import jenniferDoudnaGlow from '../../../assets/glowing-chars/Jennifer Doudna.mp4';
+
 const INACTIVITY_TIMEOUT = 5 * 60 * 1000;
+const GLOW_HINT_DURATION_MS = 3000;
+const GLOW_HINT_COOLDOWN_MS = 8000;
 
 const imageMap: Record<string, string> = {
   'Alwin C Ernst': alwinErnst,
@@ -34,6 +46,18 @@ const imageMap: Record<string, string> = {
   'Jennifer Doudna': jenniferDoudna,
 };
 
+const glowVideoMap: Record<string, string> = {
+  'Alwin C Ernst': alwinErnstGlow,
+  'Satya Nadella': satyaNadellaGlow,
+  'Arthur Young': arthurYoungGlow,
+  'Marie Curie': marieCurieGlow,
+  'Albert Einstein': albertEinsteinGlow,
+  'Thomas Edison': thomasEdisonGlow,
+  'Alexander Hamilton': alexanderHamiltonGlow,
+  'Jensen Huang': jensenHuangGlow,
+  'Jennifer Doudna': jenniferDoudnaGlow,
+};
+
 const MAX_FIGURE_HEIGHT = Math.max(...characters.map((c) => c.height));
 
 const FIGURE_DATA = characters.map((c) => {
@@ -42,6 +66,7 @@ const FIGURE_DATA = characters.map((c) => {
   return {
     id: c.id,
     image: imageMap[c.name],
+    glowVideo: glowVideoMap[c.name],
     width: normalizedWidth,
     height: MAX_FIGURE_HEIGHT,
     name: c.name,
@@ -79,6 +104,7 @@ interface InteractiveDisplayProps {
 function InteractiveDisplay({
   onReturnToScreenSaver,
 }: InteractiveDisplayProps) {
+  const [isMuted, setIsMuted] = useState(false);
   const [selectedBySection, setSelectedBySection] = useState<{
     left: number | null;
     middle: number | null;
@@ -92,12 +118,15 @@ function InteractiveDisplay({
     right: false,
   });
   const [presenceDetected, setPresenceDetected] = useState(false);
+  const [recentActivity, setRecentActivity] = useState(false);
   const [sectionAnchors, setSectionAnchors] = useState<{
     left: { x: number; yTop: number; height: number };
     middle: { x: number; yTop: number; height: number };
     right: { x: number; yTop: number; height: number };
   } | null>(null);
-  let inactivityTimerRef: NodeJS.Timeout | null = null;
+  const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const recentActivityTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lastGlowHintAtRef = useRef<number>(0);
 
   const baseMetrics = useMemo(() => {
     const totalWidth = FIGURE_DATA.reduce((sum, f) => sum + f.width, 0);
@@ -106,14 +135,28 @@ function InteractiveDisplay({
   }, []);
 
   const resetInactivityTimer = () => {
-    if (inactivityTimerRef) {
-      clearTimeout(inactivityTimerRef);
+    if (inactivityTimerRef.current) {
+      clearTimeout(inactivityTimerRef.current);
     }
 
-    inactivityTimerRef = setTimeout(() => {
+    inactivityTimerRef.current = setTimeout(() => {
       setSelectedBySection({ left: null, middle: null, right: null });
       onReturnToScreenSaver();
     }, INACTIVITY_TIMEOUT);
+  };
+
+  const flagRecentActivity = () => {
+    const now = Date.now();
+    if (recentActivity) return;
+    if (now - lastGlowHintAtRef.current < GLOW_HINT_COOLDOWN_MS) return;
+    lastGlowHintAtRef.current = now;
+    setRecentActivity(true);
+    if (recentActivityTimerRef.current)
+      clearTimeout(recentActivityTimerRef.current);
+    recentActivityTimerRef.current = setTimeout(
+      () => setRecentActivity(false),
+      GLOW_HINT_DURATION_MS,
+    );
   };
 
   useEffect(() => {
@@ -139,6 +182,13 @@ function InteractiveDisplay({
     const handleActivity = () => {
       detectPresence();
       resetInactivityTimer();
+      if (
+        selectedBySection.left === null &&
+        selectedBySection.middle === null &&
+        selectedBySection.right === null
+      ) {
+        flagRecentActivity();
+      }
     };
 
     window.addEventListener('mousemove', handleActivity);
@@ -151,11 +201,14 @@ function InteractiveDisplay({
       window.removeEventListener('mousedown', handleActivity);
       window.removeEventListener('keydown', handleActivity);
       window.removeEventListener('touchstart', handleActivity);
-      if (inactivityTimerRef) {
-        clearTimeout(inactivityTimerRef);
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+      }
+      if (recentActivityTimerRef.current) {
+        clearTimeout(recentActivityTimerRef.current);
       }
     };
-  }, [onReturnToScreenSaver, presenceDetected]);
+  }, [onReturnToScreenSaver, presenceDetected, selectedBySection]);
 
   const handleFigureClick = (index: number) => {
     const section = index < 3 ? 'left' : index < 6 ? 'middle' : 'right';
@@ -176,12 +229,66 @@ function InteractiveDisplay({
         selectedBySection.left === null &&
         selectedBySection.middle === null &&
         selectedBySection.right === null
-          ? 'guidance'
+          ? `guidance ${recentActivity ? 'recent-activity' : ''}`
           : ''
       }`}
     >
-      <BackgroundVideo src={particlesVideo} className="particles-background" />
-      {/* <BackgroundAudio src={bgMusic} volume={0.08} /> */}
+      <BackgroundVideo
+        src={particlesVideo}
+        className="particles-background background-video"
+      />
+      <BackgroundAudio src={bgMusic} volume={isMuted ? 0 : 0.08} />
+      <div className="audio-hover-area" />
+      <div className="audio-controls">
+        <button
+          type="button"
+          className="mute-toggle"
+          aria-label={
+            isMuted ? 'Unmute background audio' : 'Mute background audio'
+          }
+          onClick={() => setIsMuted((v) => !v)}
+        >
+          {isMuted ? (
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M3 10v4h4l5 5V5L7 10H3z" fill="white" />
+              <path
+                d="M16 9l6 6M22 9l-6 6"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          ) : (
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M3 10v4h4l5 5V5L7 10H3z" fill="white" />
+              <path
+                d="M16.5 8.5a5 5 0 010 7"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <path
+                d="M14.5 10.5a2.5 2.5 0 010 3"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          )}
+        </button>
+      </div>
       <div
         className={`logo-container ${presenceDetected ? 'top-left' : 'centered'}`}
       >
@@ -196,7 +303,7 @@ function InteractiveDisplay({
             top:
               sectionAnchors.left.yTop -
               Math.round(
-                Math.max(120, Math.min(260, sectionAnchors.left.height * 0.4)),
+                Math.max(120, Math.min(260, sectionAnchors.left.height * 0.54)),
               ),
             transform: 'translate(-50%, -100%)',
           }}
@@ -213,7 +320,7 @@ function InteractiveDisplay({
               Math.round(
                 Math.max(
                   110,
-                  Math.min(240, sectionAnchors.middle.height * 0.35),
+                  Math.min(240, sectionAnchors.middle.height * 0.42),
                 ),
               ),
             transform: 'translate(-50%, -100%)',
@@ -229,7 +336,10 @@ function InteractiveDisplay({
             top:
               sectionAnchors.right.yTop -
               Math.round(
-                Math.max(120, Math.min(260, sectionAnchors.right.height * 0.4)),
+                Math.max(
+                  120,
+                  Math.min(260, sectionAnchors.right.height * 0.54),
+                ),
               ),
             transform: 'translate(-50%, -100%)',
           }}
@@ -253,6 +363,13 @@ function InteractiveDisplay({
             onClickFigure={handleFigureClick}
             visibleSections={visibleSections}
             onSectionsLayout={setSectionAnchors}
+            showGlowHint={
+              presenceDetected &&
+              recentActivity &&
+              selectedBySection.left === null &&
+              selectedBySection.middle === null &&
+              selectedBySection.right === null
+            }
           />
         </div>
       )}

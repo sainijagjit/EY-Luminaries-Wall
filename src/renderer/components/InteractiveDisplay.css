@@ -23,6 +23,13 @@
   pointer-events: none;
 }
 
+.background-video {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
 .logo-container {
   position: absolute;
   z-index: 100;
@@ -33,6 +40,60 @@
     left 800ms cubic-bezier(0.22, 1, 0.36, 1),
     transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: top, left, transform;
+}
+
+.audio-hover-area {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 56px;
+  height: 40px;
+  z-index: 110;
+}
+
+.audio-controls {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 111;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+  pointer-events: none;
+}
+
+.audio-hover-area:hover + .audio-controls,
+.audio-controls:hover {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.mute-toggle {
+  appearance: none;
+  border: none;
+  padding: 8px;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition:
+    background 150ms ease,
+    transform 150ms ease;
+}
+
+.mute-toggle:hover {
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.mute-toggle:active {
+  transform: scale(0.96);
 }
 
 .logo-container.centered {
@@ -52,7 +113,7 @@
 }
 
 .ey-logo {
-  width: clamp(200px, 25vw, 720px);
+  width: clamp(180px, 20vw, 640px);
   height: auto;
   object-fit: contain;
 }
@@ -172,7 +233,7 @@
 }
 
 .figure-section.left.hidden {
-  transform: translate(-60px, 20px);
+  transform: translateY(20px);
 }
 
 .figure-section.left.visible {
@@ -180,7 +241,7 @@
 }
 
 .figure-section.right.hidden {
-  transform: translate(60px, 20px);
+  transform: translateY(20px);
 }
 
 .figure-section.right.visible {
@@ -195,13 +256,13 @@
 
 @media (min-width: 1600px) {
   .figures-container {
-    gap: clamp(64px, 8vw, 200px);
+    gap: clamp(104px, 10vw, 260px);
   }
 }
 
 @media (min-width: 2200px) {
   .figures-container {
-    gap: clamp(96px, 10vw, 260px);
+    gap: clamp(136px, 12vw, 320px);
   }
 }
 

@@ -19,7 +19,7 @@
 }
 
 .figure-container.selected {
-  transform: scale(1.3);
+  transform: scale(1.45);
   z-index: 15;
 }
 
@@ -36,6 +36,33 @@
   display: block;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+}
+
+.figure-glow-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  pointer-events: none;
+  z-index: 1;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background-color: transparent;
+}
+
+.overlay-video {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.video-overlay-container {
+  isolation: isolate;
 }
 
 .figure-image.grayscale {

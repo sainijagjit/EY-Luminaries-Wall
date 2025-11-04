@@ -17,6 +17,7 @@ type FiguresRowProps = {
     middle: { x: number; yTop: number; height: number };
     right: { x: number; yTop: number; height: number };
   }) => void;
+  showGlowHint?: boolean;
 };
 
 export default function FiguresRow({
@@ -27,6 +28,7 @@ export default function FiguresRow({
   onClickFigure,
   visibleSections,
   onSectionsLayout,
+  showGlowHint,
 }: FiguresRowProps) {
   const baseMetrics = useMemo(() => {
     const totalWidth = figures.reduce((sum, f) => sum + f.width, 0);
@@ -122,6 +124,7 @@ export default function FiguresRow({
             onHover={onHover}
             onClickFigure={onClickFigure}
             groupClassName="group-1"
+            showGlowHint={showGlowHint}
           />
         </div>
         <div
@@ -136,6 +139,7 @@ export default function FiguresRow({
             onHover={onHover}
             onClickFigure={onClickFigure}
             groupClassName="group-2"
+            showGlowHint={showGlowHint}
           />
         </div>
         <div
@@ -150,6 +154,7 @@ export default function FiguresRow({
             onHover={onHover}
             onClickFigure={onClickFigure}
             groupClassName="group-3"
+            showGlowHint={showGlowHint}
           />
         </div>
       </div>

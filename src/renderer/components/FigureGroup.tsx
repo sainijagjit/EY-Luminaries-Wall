@@ -8,6 +8,7 @@ export type NormalizedFigure = {
   height: number;
   name: string;
   description: string;
+  glowVideo?: string;
 };
 
 type FigureGroupProps = {
@@ -18,6 +19,7 @@ type FigureGroupProps = {
   onHover: (index: number | null) => void;
   onClickFigure: (index: number) => void;
   groupClassName: string;
+  showGlowHint?: boolean;
 };
 
 const FigureGroup: React.FC<FigureGroupProps> = ({
@@ -28,6 +30,7 @@ const FigureGroup: React.FC<FigureGroupProps> = ({
   onHover,
   onClickFigure,
   groupClassName,
+  showGlowHint,
 }) => {
   const activeIndex = hoveredIndex !== null ? hoveredIndex : null;
   return (
@@ -43,6 +46,7 @@ const FigureGroup: React.FC<FigureGroupProps> = ({
             key={globalIndex}
             id={globalIndex + 1}
             imagePath={figure.image}
+            glowVideoPath={figure.glowVideo}
             isSelected={isSelected}
             isHovered={isHovered}
             isDimmed={isDimmed}
@@ -52,6 +56,7 @@ const FigureGroup: React.FC<FigureGroupProps> = ({
             width={figure.width}
             height={figure.height}
             className={`figure-${globalIndex + 1}`}
+            showGlowHint={!!showGlowHint}
           />
         );
       })}
