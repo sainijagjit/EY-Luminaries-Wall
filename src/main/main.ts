@@ -65,7 +65,7 @@ const createWindow = async () => {
   }
   const { width: screenWidth, height: screenHeight } =
     screen.getPrimaryDisplay().workAreaSize;
-  // Calculate height based on 16:5 aspect ratio
+  // Calculate height based on 16:6 aspect ratio
   const height = Math.round(screenWidth * (6 / 16));
 
   // Center the window vertically
@@ -100,9 +100,6 @@ const createWindow = async () => {
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
-
-  // Maintain a 16:5 aspect ratio during manual resizing
-  mainWindow.setAspectRatio(16 / 5);
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 

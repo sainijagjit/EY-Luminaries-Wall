@@ -17,11 +17,13 @@
 
 .particles-background {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
+  transform: none;
   object-fit: cover;
-  object-position: center center;
+  object-position: 52% 50% !important;
   z-index: 0;
   opacity: 1;
   mix-blend-mode: normal;
@@ -35,8 +37,8 @@
 }
 
 .logo-container {
-  position: fixed;
-  z-index: 2000;
+  position: absolute;
+  z-index: 100;
   display: flex;
   flex-direction: column;
   transition:

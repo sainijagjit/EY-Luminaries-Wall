@@ -148,8 +148,12 @@ function InteractiveDisplay({
     }
 
     inactivityTimerRef.current = setTimeout(() => {
+      // Return to start state: clear selections, hide figures, center logo
       setSelectedBySection({ left: null, middle: null, right: null });
-      onReturnToScreenSaver();
+      setShowFigures(false);
+      setVisibleSections({ left: false, middle: false, right: false });
+      setSectionAnchors(null);
+      setPresenceDetected(false);
     }, INACTIVITY_TIMEOUT);
   };
 
@@ -279,21 +283,29 @@ function InteractiveDisplay({
     };
 
     window.addEventListener('mousedown', handleActivity);
-    window.addEventListener('keydown', handleActivity);
-    window.addEventListener('touchstart', handleActivity);
 
     return () => {
       window.removeEventListener('mousedown', handleActivity);
-      window.removeEventListener('keydown', handleActivity);
-      window.removeEventListener('touchstart', handleActivity);
       if (inactivityTimerRef.current) {
-        clearTimeout(inactivityTimerRef.current);
+        // Do not clear inactivity timer on effect re-run; only on unmount
       }
       if (recentActivityTimerRef.current) {
         clearTimeout(recentActivityTimerRef.current);
       }
     };
   }, [onReturnToScreenSaver, presenceDetected, selectedBySection]);
+
+  // Start the inactivity timer on mount
+  useEffect(() => {
+    resetInactivityTimer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // When presence is detected, ensure timer is running
+  useEffect(() => {
+    if (presenceDetected) resetInactivityTimer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [presenceDetected]);
 
   const handleFigureClick = (index: number) => {
     const section = index < 3 ? 'left' : index < 6 ? 'middle' : 'right';
@@ -324,7 +336,9 @@ function InteractiveDisplay({
         src={particlesVideo}
         className="particles-background background-video"
       />
-      <div className="logo-container top-left">
+      <div
+        className={`logo-container ${presenceDetected ? 'top-left' : 'centered'}`}
+      >
         <Logo src={eyLogo} className="ey-logo" />
       </div>
       <div className="audio-hover-area" />

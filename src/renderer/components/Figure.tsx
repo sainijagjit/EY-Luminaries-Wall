@@ -47,7 +47,7 @@ function Figure({
       }}
     >
       <div className="figure-outline" />
-      {isHovered && glowVideoPath && !isSelected ? (
+      {glowVideoPath && !isSelected ? (
         <video
           className="figure-glow-video overlay-video"
           src={glowVideoPath}
@@ -56,6 +56,7 @@ function Figure({
           playsInline
           loop
           style={{
+            opacity: 0.4,
             mixBlendMode: 'plus-lighter',
             transform: 'translateZ(0)',
             backfaceVisibility: 'hidden',
