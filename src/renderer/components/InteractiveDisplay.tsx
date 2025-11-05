@@ -191,13 +191,11 @@ function InteractiveDisplay({
       }
     };
 
-    window.addEventListener('mousemove', handleActivity);
     window.addEventListener('mousedown', handleActivity);
     window.addEventListener('keydown', handleActivity);
     window.addEventListener('touchstart', handleActivity);
 
     return () => {
-      window.removeEventListener('mousemove', handleActivity);
       window.removeEventListener('mousedown', handleActivity);
       window.removeEventListener('keydown', handleActivity);
       window.removeEventListener('touchstart', handleActivity);
@@ -321,8 +319,8 @@ function InteractiveDisplay({
               sectionAnchors.middle.yTop -
               Math.round(
                 Math.max(
-                  110,
-                  Math.min(240, sectionAnchors.middle.height * 0.42),
+                  120,
+                  Math.min(260, sectionAnchors.middle.height * 0.54),
                 ),
               ),
             transform: 'translate(-50%, -100%)',

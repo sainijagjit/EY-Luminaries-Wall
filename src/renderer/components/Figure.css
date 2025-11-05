@@ -14,7 +14,6 @@
 
 .figure-container.hovered {
   transform: none;
-  z-index: 20;
   box-shadow: none;
 }
 
