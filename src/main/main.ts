@@ -63,6 +63,13 @@ const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
   }
+  const { width: screenWidth, height: screenHeight } =
+    screen.getPrimaryDisplay().workAreaSize;
+  // Calculate height based on 16:5 aspect ratio
+  const height = Math.round(screenWidth * (6 / 16));
+
+  // Center the window vertically
+  const y = Math.round((screenHeight - height) / 2);
 
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
@@ -76,9 +83,11 @@ const createWindow = async () => {
     screen.getPrimaryDisplay().workAreaSize;
 
   mainWindow = new BrowserWindow({
-    show: false,
-    width: workWidth,
-    height: workHeight,
+    x: 0,
+    y,
+    width: screenWidth,
+    height,
+    frame: true,
     resizable: true,
     maximizable: true,
     minimizable: true,
@@ -91,6 +100,9 @@ const createWindow = async () => {
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
+
+  // Maintain a 16:5 aspect ratio during manual resizing
+  mainWindow.setAspectRatio(16 / 5);
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 

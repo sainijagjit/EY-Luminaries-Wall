@@ -35,8 +35,8 @@
 }
 
 .logo-container {
-  position: absolute;
-  z-index: 100;
+  position: fixed;
+  z-index: 2000;
   display: flex;
   flex-direction: column;
   transition:
@@ -109,15 +109,15 @@
 }
 
 .logo-container.top-left {
-  top: 40px;
-  left: 40px;
+  top: 10px;
+  left: 18px;
   transform: none;
   align-items: flex-start;
   justify-content: flex-start;
 }
 
 .ey-logo {
-  width: clamp(180px, 20vw, 450px);
+  width: clamp(180px, 14vw, 450px);
   height: auto;
   object-fit: contain;
 }

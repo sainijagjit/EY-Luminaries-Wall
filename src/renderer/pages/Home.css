@@ -1,6 +1,6 @@
 .home-container {
   width: 3840px;
-  height: 1200px;
+  height: 100vh;
   overflow: auto;
   display: flex;
   align-items: center;
