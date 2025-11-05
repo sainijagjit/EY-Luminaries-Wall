@@ -105,6 +105,8 @@ function InteractiveDisplay({
   onReturnToScreenSaver,
 }: InteractiveDisplayProps) {
   const [isMuted, setIsMuted] = useState(false);
+  const [canvasScale, setCanvasScale] = useState(1);
+  const [canvasOffset, setCanvasOffset] = useState({ x: 0, y: 0 });
   const [selectedBySection, setSelectedBySection] = useState<{
     left: number | null;
     middle: number | null;
@@ -124,6 +126,12 @@ function InteractiveDisplay({
     middle: { x: number; yTop: number; height: number };
     right: { x: number; yTop: number; height: number };
   } | null>(null);
+  const [layoutTick, setLayoutTick] = useState(0);
+  const [bioAnchors, setBioAnchors] = useState<{
+    left: { x: number; yTop: number; height: number } | null;
+    middle: { x: number; yTop: number; height: number } | null;
+    right: { x: number; yTop: number; height: number } | null;
+  }>({ left: null, middle: null, right: null });
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
   const recentActivityTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastGlowHintAtRef = useRef<number>(0);
@@ -145,6 +153,28 @@ function InteractiveDisplay({
     }, INACTIVITY_TIMEOUT);
   };
 
+  useEffect(() => {
+    const updateAnchors = () => {
+      setBioAnchors({
+        left:
+          selectedBySection.left !== null
+            ? measureFigureAnchor(selectedBySection.left)
+            : null,
+        middle:
+          selectedBySection.middle !== null
+            ? measureFigureAnchor(selectedBySection.middle)
+            : null,
+        right:
+          selectedBySection.right !== null
+            ? measureFigureAnchor(selectedBySection.right)
+            : null,
+      });
+    };
+    updateAnchors();
+    const t = setTimeout(updateAnchors, 50);
+    return () => clearTimeout(t);
+  }, [selectedBySection, layoutTick, canvasScale]);
+
   const flagRecentActivity = () => {
     const now = Date.now();
     if (recentActivity) return;
@@ -157,6 +187,63 @@ function InteractiveDisplay({
       () => setRecentActivity(false),
       GLOW_HINT_DURATION_MS,
     );
+  };
+
+  useEffect(() => {
+    const recalcScale = () => {
+      const designWidth = 3840;
+      const baseDesignHeight = 1200;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      // For smaller windows, virtually shrink the design height so content appears larger while still fitting
+      const smallness = Math.max(0, Math.min(1, 1600 / Math.max(w, h) - 0.3));
+      const virtualHeight = Math.max(
+        900,
+        Math.round(baseDesignHeight * (1 - 0.18 * smallness)),
+      );
+      const widthRatio = w / designWidth;
+      const heightRatio = h / virtualHeight;
+      const base = Math.min(widthRatio, heightRatio);
+      const boost = 0.32;
+      const desired = base * (1 + boost * (1 - Math.min(base, 1)));
+      const finalScale = Math.min(desired, widthRatio, heightRatio, 1);
+      setCanvasScale(
+        finalScale > 0 && Number.isFinite(finalScale) ? finalScale : 1,
+      );
+      const scaledW = designWidth * finalScale;
+      const scaledH = baseDesignHeight * finalScale;
+      const offsetX = Math.max(0, Math.floor((w - scaledW) / 2));
+      const offsetY = Math.max(0, Math.floor(h - scaledH)); // anchor to bottom
+      setCanvasOffset({ x: offsetX, y: offsetY });
+    };
+    recalcScale();
+    window.addEventListener('resize', recalcScale);
+    return () => window.removeEventListener('resize', recalcScale);
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => setLayoutTick((v) => v + 1);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const measureFigureAnchor = (index: number | null) => {
+    if (index === null) return null;
+    const el = document.querySelector(
+      `.figure-${index + 1}`,
+    ) as HTMLElement | null;
+    const canvas = document.querySelector(
+      '.design-canvas',
+    ) as HTMLElement | null;
+    if (!el || !canvas) return null;
+    const r = el.getBoundingClientRect();
+    const cr = canvas.getBoundingClientRect();
+    const scale = canvasScale || 1;
+    return {
+      x: (r.left + r.width / 2 - cr.left) / scale,
+      yTop: (r.top - cr.top) / scale,
+      height: r.height / scale,
+    };
   };
 
   useEffect(() => {
@@ -237,7 +324,9 @@ function InteractiveDisplay({
         src={particlesVideo}
         className="particles-background background-video"
       />
-      <BackgroundAudio src={bgMusic} volume={isMuted ? 0 : 0.08} />
+      <div className="logo-container top-left">
+        <Logo src={eyLogo} className="ey-logo" />
+      </div>
       <div className="audio-hover-area" />
       <div className="audio-controls">
         <button
@@ -290,89 +379,111 @@ function InteractiveDisplay({
         </button>
       </div>
       <div
-        className={`logo-container ${presenceDetected ? 'top-left' : 'centered'}`}
+        className="design-canvas"
+        style={{
+          width: 3840,
+          height: 1200,
+          transform: `scale(${canvasScale})`,
+          transformOrigin: 'top left',
+          left: canvasOffset.x,
+          top: canvasOffset.y,
+        }}
       >
-        <Logo src={eyLogo} className="ey-logo" />
-      </div>
-      {selectedBySection.left !== null && sectionAnchors && (
-        <BioText
-          name={FIGURE_DATA[selectedBySection.left].name}
-          description={FIGURE_DATA[selectedBySection.left].description}
-          style={{
-            left: sectionAnchors.left.x,
-            top:
-              sectionAnchors.left.yTop -
-              Math.round(
-                Math.max(120, Math.min(260, sectionAnchors.left.height * 0.54)),
-              ),
-            transform: 'translate(-50%, -100%)',
-          }}
-        />
-      )}
-      {selectedBySection.middle !== null && sectionAnchors && (
-        <BioText
-          name={FIGURE_DATA[selectedBySection.middle].name}
-          description={FIGURE_DATA[selectedBySection.middle].description}
-          style={{
-            left: sectionAnchors.middle.x,
-            top:
-              sectionAnchors.middle.yTop -
-              Math.round(
-                Math.max(
-                  120,
-                  Math.min(260, sectionAnchors.middle.height * 0.54),
+        <BackgroundAudio src={bgMusic} volume={isMuted ? 0 : 0.08} />
+
+        {selectedBySection.left !== null && sectionAnchors && (
+          <BioText
+            name={FIGURE_DATA[selectedBySection.left].name}
+            description={FIGURE_DATA[selectedBySection.left].description}
+            style={{
+              left: sectionAnchors.left.x / (canvasScale || 1),
+              top:
+                sectionAnchors.left.yTop / (canvasScale || 1) -
+                Math.round(
+                  Math.max(
+                    120,
+                    Math.min(
+                      260,
+                      (sectionAnchors.left.height / (canvasScale || 1)) * 0.54,
+                    ),
+                  ),
                 ),
-              ),
-            transform: 'translate(-50%, -100%)',
-          }}
-        />
-      )}
-      {selectedBySection.right !== null && sectionAnchors && (
-        <BioText
-          name={FIGURE_DATA[selectedBySection.right].name}
-          description={FIGURE_DATA[selectedBySection.right].description}
-          style={{
-            left: sectionAnchors.right.x,
-            top:
-              sectionAnchors.right.yTop -
-              Math.round(
-                Math.max(
-                  120,
-                  Math.min(260, sectionAnchors.right.height * 0.54),
-                ),
-              ),
-            transform: 'translate(-50%, -100%)',
-          }}
-        />
-      )}
-      {showFigures && (
-        <div className="content-container">
-          <FiguresRow
-            figures={FIGURE_DATA}
-            selectedSet={
-              new Set(
-                [
-                  selectedBySection.left,
-                  selectedBySection.middle,
-                  selectedBySection.right,
-                ].filter((v): v is number => v !== null),
-              )
-            }
-            hoveredIndex={hoveredFigure}
-            onHover={setHoveredFigure}
-            onClickFigure={handleFigureClick}
-            visibleSections={visibleSections}
-            onSectionsLayout={setSectionAnchors}
-            showGlowHint={
-              presenceDetected &&
-              recentActivity &&
-              selectedBySection.left === null &&
-              selectedBySection.middle === null &&
-              selectedBySection.right === null
-            }
+              transform: 'translate(-50%, -100%)',
+            }}
           />
-        </div>
-      )}
+        )}
+        {selectedBySection.middle !== null && sectionAnchors && (
+          <BioText
+            name={FIGURE_DATA[selectedBySection.middle].name}
+            description={FIGURE_DATA[selectedBySection.middle].description}
+            style={{
+              left: sectionAnchors.middle.x / (canvasScale || 1),
+              top:
+                sectionAnchors.middle.yTop / (canvasScale || 1) -
+                Math.round(
+                  Math.max(
+                    120,
+                    Math.min(
+                      260,
+                      (sectionAnchors.middle.height / (canvasScale || 1)) *
+                        0.54,
+                    ),
+                  ),
+                ),
+              transform: 'translate(-50%, -100%)',
+            }}
+          />
+        )}
+        {selectedBySection.right !== null && sectionAnchors && (
+          <BioText
+            name={FIGURE_DATA[selectedBySection.right].name}
+            description={FIGURE_DATA[selectedBySection.right].description}
+            style={{
+              left: sectionAnchors.right.x / (canvasScale || 1),
+              top:
+                sectionAnchors.right.yTop / (canvasScale || 1) -
+                Math.round(
+                  Math.max(
+                    120,
+                    Math.min(
+                      260,
+                      (sectionAnchors.right.height / (canvasScale || 1)) * 0.54,
+                    ),
+                  ),
+                ),
+              transform: 'translate(-50%, -100%)',
+            }}
+          />
+        )}
+        {showFigures && (
+          <div className="content-container">
+            <FiguresRow
+              figures={FIGURE_DATA}
+              selectedSet={
+                new Set(
+                  [
+                    selectedBySection.left,
+                    selectedBySection.middle,
+                    selectedBySection.right,
+                  ].filter((v): v is number => v !== null),
+                )
+              }
+              hoveredIndex={hoveredFigure}
+              onHover={setHoveredFigure}
+              onClickFigure={handleFigureClick}
+              visibleSections={visibleSections}
+              onSectionsLayout={setSectionAnchors}
+              showGlowHint={
+                presenceDetected &&
+                recentActivity &&
+                selectedBySection.left === null &&
+                selectedBySection.middle === null &&
+                selectedBySection.right === null
+              }
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

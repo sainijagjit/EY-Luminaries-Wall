@@ -38,6 +38,7 @@ export default function FiguresRow({
 
   const scaleWrapperRef = useRef<HTMLDivElement | null>(null);
   const [scale, setScale] = useState(1);
+  const [containerGap, setContainerGap] = useState(0);
 
   useLayoutEffect(() => {
     const recalc = () => {
@@ -45,21 +46,30 @@ export default function FiguresRow({
       if (!wrapper) return;
       const availableWidth = wrapper.clientWidth;
       const availableHeight = wrapper.clientHeight;
-      let gap = Math.max(16, Math.min(availableWidth * 0.04, 80));
+      let gap = Math.max(2, Math.min(availableWidth * 0.012, 32));
       if (availableWidth >= 2200) {
         gap = Math.max(96, Math.min(availableWidth * 0.1, 260));
       } else if (availableWidth >= 1600) {
         gap = Math.max(64, Math.min(availableWidth * 0.08, 200));
+      } else if (availableWidth < 1400) {
+        gap = Math.max(1, Math.min(availableWidth * 0.008, 20));
       }
-      const horizontalPadding = 24 * 2;
+      const dynamicPadding = Math.max(2, Math.min(10, availableWidth * 0.005));
+      const horizontalPadding = dynamicPadding * 2;
       const naturalWidth = baseMetrics.totalWidth + 2 * gap + horizontalPadding;
       const naturalHeight = baseMetrics.maxHeight;
+      const reservedBottom = 0;
       const s = Math.min(
         1,
         availableWidth / naturalWidth,
-        availableHeight / naturalHeight,
+        (availableHeight - reservedBottom) / naturalHeight,
       );
-      setScale(s > 0 && Number.isFinite(s) ? s : 1);
+      // Apply a stronger, size-aware boost only when below native scale
+      // More shrink -> slightly more boost, capped to 1
+      const boostFactor = 0.35; // 35% of the missing scale is added back
+      const boosted = s < 1 ? Math.min(1, s * (1 + boostFactor * (1 - s))) : s;
+      setScale(boosted > 0 && Number.isFinite(boosted) ? boosted : 1);
+      setContainerGap(gap);
     };
     recalc();
     window.addEventListener('resize', recalc);
@@ -77,25 +87,28 @@ export default function FiguresRow({
       const midEl = middleRef.current;
       const rightEl = rightRef.current;
       const wrapper = scaleWrapperRef.current;
-      if (!leftEl || !midEl || !rightEl || !wrapper) return;
-      const wrapperRect = wrapper.getBoundingClientRect();
+      const canvas = document.querySelector(
+        '.design-canvas',
+      ) as HTMLElement | null;
+      if (!leftEl || !midEl || !rightEl || !wrapper || !canvas) return;
+      const canvasRect = canvas.getBoundingClientRect();
       const lr = leftEl.getBoundingClientRect();
       const mr = midEl.getBoundingClientRect();
       const rr = rightEl.getBoundingClientRect();
       onSectionsLayout({
         left: {
-          x: lr.left + lr.width / 2 - wrapperRect.left,
-          yTop: lr.top - wrapperRect.top,
+          x: lr.left + lr.width / 2 - canvasRect.left,
+          yTop: lr.top - canvasRect.top,
           height: lr.height,
         },
         middle: {
-          x: mr.left + mr.width / 2 - wrapperRect.left,
-          yTop: mr.top - wrapperRect.top,
+          x: mr.left + mr.width / 2 - canvasRect.left,
+          yTop: mr.top - canvasRect.top,
           height: mr.height,
         },
         right: {
-          x: rr.left + rr.width / 2 - wrapperRect.left,
-          yTop: rr.top - wrapperRect.top,
+          x: rr.left + rr.width / 2 - canvasRect.left,
+          yTop: rr.top - canvasRect.top,
           height: rr.height,
         },
       });
@@ -111,7 +124,7 @@ export default function FiguresRow({
       ref={scaleWrapperRef}
       style={{ transform: `scale(${scale})` }}
     >
-      <div className="figures-container">
+      <div className="figures-container" style={{ gap: `${containerGap}px` }}>
         <div
           ref={leftRef}
           className={`figure-section left ${visibleSections.left ? 'visible' : 'hidden'}`}
