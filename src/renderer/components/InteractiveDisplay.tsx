@@ -415,7 +415,7 @@ function InteractiveDisplay({
           top: canvasOffset.y,
         }}
       >
-        {/* <BackgroundAudio src={bgMusic} volume={isMuted ? 0 : 0.08} /> */}
+        <BackgroundAudio src={bgMusic} volume={isMuted ? 0 : 0.08} />
 
         {selectedBySection.left !== null && sectionAnchors && (
           <BioText
