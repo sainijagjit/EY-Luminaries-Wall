@@ -119,6 +119,11 @@ function InteractiveDisplay({
     left: false,
     right: false,
   });
+  const [bioAnimTick, setBioAnimTick] = useState({
+    left: 0,
+    middle: 0,
+    right: 0,
+  });
   const [presenceDetected, setPresenceDetected] = useState(false);
   const [recentActivity, setRecentActivity] = useState(false);
   const [sectionAnchors, setSectionAnchors] = useState<{
@@ -316,6 +321,13 @@ function InteractiveDisplay({
       if (prev[key] === index) return prev;
       return { ...prev, [key]: index };
     });
+    setBioAnimTick((prev) => {
+      const key = (index < 3 ? 'left' : index < 6 ? 'middle' : 'right') as
+        | 'left'
+        | 'middle'
+        | 'right';
+      return { ...prev, [key]: prev[key] + 1 };
+    });
     resetInactivityTimer();
   };
 
@@ -403,10 +415,11 @@ function InteractiveDisplay({
           top: canvasOffset.y,
         }}
       >
-        <BackgroundAudio src={bgMusic} volume={isMuted ? 0 : 0.08} />
+        {/* <BackgroundAudio src={bgMusic} volume={isMuted ? 0 : 0.08} /> */}
 
         {selectedBySection.left !== null && sectionAnchors && (
           <BioText
+            key={`left-${selectedBySection.left}-${bioAnimTick.left}`}
             name={FIGURE_DATA[selectedBySection.left].name}
             description={FIGURE_DATA[selectedBySection.left].description}
             style={{
@@ -428,6 +441,7 @@ function InteractiveDisplay({
         )}
         {selectedBySection.middle !== null && sectionAnchors && (
           <BioText
+            key={`middle-${selectedBySection.middle}-${bioAnimTick.middle}`}
             name={FIGURE_DATA[selectedBySection.middle].name}
             description={FIGURE_DATA[selectedBySection.middle].description}
             style={{
@@ -450,6 +464,7 @@ function InteractiveDisplay({
         )}
         {selectedBySection.right !== null && sectionAnchors && (
           <BioText
+            key={`right-${selectedBySection.right}-${bioAnimTick.right}`}
             name={FIGURE_DATA[selectedBySection.right].name}
             description={FIGURE_DATA[selectedBySection.right].description}
             style={{

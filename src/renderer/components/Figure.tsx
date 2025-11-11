@@ -37,7 +37,11 @@ function Figure({
       onClick={onClick}
       role="button"
       tabIndex={0}
-      style={{ width: `${width}px`, height: `${height}px` }}
+      style={{
+        width: `${width}px`,
+        height: `${height}px`,
+        marginInline: '5px',
+      }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onKeyDown={(e) => {
