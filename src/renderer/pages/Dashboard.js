@@ -62,29 +62,31 @@ export default function Dashboard() {
             style={{
               display: 'flex',
               flexDirection: 'row',
-              gap: '0.5vw',
               alignItems: 'flex-end',
               borderRadius: '8px',
               flex: 1,
+              justifyContent: 'center',
             }}
           >
-            {group.map((character) => (
+            {group.map((character, index) => (
               <div
                 key={character.id}
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  flex: 1,
+                  marginLeft: index > 0 ? '-110px' : '0',
+                  zIndex: index === 1 ? 3 : index === 0 ? 1 : 2,
+                  position: 'relative',
                 }}
               >
                 <img
                   src={imageMap[character.staticImage]}
                   alt={character.name}
                   style={{
-                    maxHeight: 'min(415px, 50vh)',
+                    maxHeight: 'min(415px, 38vh)',
                     height: 'auto',
-                    width: '100%',
+                    width: 'auto',
                     maxWidth: '100%',
                     objectFit: 'contain',
                     display: 'block',

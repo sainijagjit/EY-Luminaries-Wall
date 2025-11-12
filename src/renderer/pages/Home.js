@@ -36,8 +36,8 @@ function Home() {
         src={icon}
         alt="Icon"
         style={{
-          height: '10vw',
-          width: '10vw',
+          height: '6vw',
+          width: '6vw',
           cursor: clicked ? 'default' : 'pointer',
           position: 'absolute',
           zIndex: 10,
