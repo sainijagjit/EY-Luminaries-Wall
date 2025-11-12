@@ -6,8 +6,6 @@ import particlesVideo from '../../../assets/Particles_loop.mp4';
 
 function Home() {
   const [clicked, setClicked] = useState(false);
-  const [showDashboard, setShowDashboard] = useState(false);
-
   return (
     <div
       style={{
@@ -34,7 +32,6 @@ function Home() {
       >
         <source src={particlesVideo} type="video/mp4" />
       </video>
-
       <motion.img
         src={icon}
         alt="Icon"
@@ -54,7 +51,7 @@ function Home() {
         animate={
           clicked
             ? {
-                top: '2rem',
+                top: '1rem',
                 left: '2rem',
                 x: 0,
                 y: 0,
@@ -71,7 +68,7 @@ function Home() {
         }}
       />
 
-      {showDashboard && <Dashboard />}
+      {clicked && <Dashboard />}
     </div>
   );
 }
