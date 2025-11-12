@@ -6,6 +6,8 @@ import particlesVideo from '../../../assets/Particles_loop.mp4';
 
 function Home() {
   const [clicked, setClicked] = useState(false);
+  const [logoAnimationComplete, setLogoAnimationComplete] = useState(false);
+
   return (
     <div
       style={{
@@ -59,6 +61,7 @@ function Home() {
                 transition: {
                   duration: 1.2,
                   ease: 'easeInOut',
+                  onComplete: () => setLogoAnimationComplete(true),
                 },
               }
             : {}
@@ -68,7 +71,7 @@ function Home() {
         }}
       />
 
-      {clicked && <Dashboard />}
+      {clicked && <Dashboard logoAnimationComplete={logoAnimationComplete} />}
     </div>
   );
 }

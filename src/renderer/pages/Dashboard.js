@@ -5,7 +5,8 @@ import {
   generateRandomIndices,
   getCharacterZIndex,
   getCharacterGroups,
-} from './dashboardUtils';
+  GROUP_ANIMATION_DELAYS,
+} from '../utils/dashboardUtils';
 
 import alwinErnst from '../../../assets/figures/static_pngs/Alwin C Ernst.png';
 import satyaNadella from '../../../assets/figures/static_pngs/Satya Nadella.png';
@@ -51,7 +52,7 @@ const VIDEO_MAP = {
   'Jennifer Doudna_anim.webm': jenniferDoudnaVideo,
 };
 
-export default function Dashboard() {
+export default function Dashboard({ logoAnimationComplete }) {
   const characterGroups = getCharacterGroups();
 
   const [activeIndices, setActiveIndices] = useState(
@@ -91,7 +92,7 @@ export default function Dashboard() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          marginLeft: index > 0 ? '-110px' : '0',
+          marginLeft: index > 0 ? '-17.5%' : '0',
           zIndex: getCharacterZIndex(index),
           position: 'relative',
         }}
@@ -157,15 +158,24 @@ export default function Dashboard() {
     );
   };
 
-  const renderCharacterGroup = (group, groupIndex) => {
+  const renderCharacterGroup = (group, groupIndex, animationDelay) => {
     const playingCharacterId = playingVideos[groupIndex];
     const playingCharacter = group.find(
       (char) => char.id === playingCharacterId,
     );
 
     return (
-      <div
+      <motion.div
         key={groupIndex}
+        initial={{ opacity: 0, y: 150 }}
+        animate={
+          logoAnimationComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 150 }
+        }
+        transition={{
+          duration: 1.2,
+          delay: animationDelay,
+          ease: [0.25, 0.46, 0.45, 0.94],
+        }}
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -227,15 +237,15 @@ export default function Dashboard() {
             renderCharacterImage(character, index, groupIndex),
           )}
         </div>
-      </div>
+      </motion.div>
     );
   };
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.8, ease: 'easeInOut' }}
+      animate={{ opacity: logoAnimationComplete ? 1 : 0 }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
       style={{
         height: '100vh',
         width: '100%',
@@ -257,7 +267,13 @@ export default function Dashboard() {
           alignItems: 'flex-end',
         }}
       >
-        {characterGroups.map(renderCharacterGroup)}
+        {characterGroups.map((group, groupIndex) =>
+          renderCharacterGroup(
+            group,
+            groupIndex,
+            GROUP_ANIMATION_DELAYS[groupIndex],
+          ),
+        )}
       </div>
     </motion.div>
   );
