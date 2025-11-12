@@ -1,31 +1,49 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import icon from '../../../assets/icon.png';
+import Dashboard from './Dashboard';
+import particlesVideo from '../../../assets/Particles_loop.mp4';
 
 function Home() {
   const [clicked, setClicked] = useState(false);
-  const navigate = useNavigate();
+  const [showDashboard, setShowDashboard] = useState(false);
 
   return (
     <div
       style={{
         height: '100vh',
         width: '100vw',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
         overflow: 'hidden',
+        position: 'relative',
       }}
     >
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          zIndex: 0,
+        }}
+      >
+        <source src={particlesVideo} type="video/mp4" />
+      </video>
+
       <motion.img
         src={icon}
         alt="Icon"
         style={{
           height: '10vw',
           width: '10vw',
-          cursor: 'pointer',
+          cursor: clicked ? 'default' : 'pointer',
           position: 'absolute',
+          zIndex: 10,
         }}
         initial={{
           top: '50%',
@@ -51,10 +69,9 @@ function Home() {
         onClick={() => {
           setClicked(true);
         }}
-        onAnimationComplete={() => {
-          if (clicked) navigate('/dashboard');
-        }}
       />
+
+      {showDashboard && <Dashboard />}
     </div>
   );
 }
