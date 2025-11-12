@@ -129,9 +129,9 @@ export default function Dashboard({ logoAnimationComplete }) {
                 loop
                 muted
                 onClick={() => handleCharacterClick(character.id, groupIndex)}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                initial={{ opacity: 0, scale: 0.95, x: '-50%', y: '-50%' }}
+                animate={{ opacity: 1, scale: 1.25, x: '-50%', y: '-50%' }}
+                exit={{ opacity: 0, scale: 0.95, x: '-50%', y: '-50%' }}
                 transition={{
                   duration: 1.5,
                   ease: [0.43, 0.13, 0.23, 0.96],
@@ -144,9 +144,9 @@ export default function Dashboard({ logoAnimationComplete }) {
                   objectFit: 'contain',
                   display: 'block',
                   position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
+                  top: '50%',
+                  left: '50%',
+                  transformOrigin: 'center center',
                   cursor: 'pointer',
                   pointerEvents: 'auto',
                 }}
@@ -200,7 +200,7 @@ export default function Dashboard({ logoAnimationComplete }) {
                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
                 padding: '1.5rem',
                 borderRadius: '12px',
-                marginBottom: '2rem',
+                marginBottom: '3rem',
                 maxWidth: '767px',
                 boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
                 backdropFilter: 'blur(10px)',
@@ -211,7 +211,7 @@ export default function Dashboard({ logoAnimationComplete }) {
                 style={{
                   margin: 0,
                   fontSize: '0.95rem',
-                  lineHeight: '1.6',
+                  lineHeight: '1.35',
                   color: '#555',
                   textAlign: 'left',
                 }}
