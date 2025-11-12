@@ -3,6 +3,7 @@ import { useState } from 'react';
 import icon from '../../../assets/icon.png';
 import Dashboard from './Dashboard';
 import particlesVideo from '../../../assets/Particles_loop.mp4';
+import backgroundMusic from '../../../assets/Satie-Trois Gymnopedies.mp3';
 
 function Home() {
   const [clicked, setClicked] = useState(false);
@@ -34,6 +35,16 @@ function Home() {
       >
         <source src={particlesVideo} type="video/mp4" />
       </video>
+      <audio
+        src={backgroundMusic}
+        autoPlay
+        loop
+        preload="auto"
+        onLoadedMetadata={(e) => {
+          e.target.volume = 0.2;
+        }}
+        style={{ display: 'none' }}
+      />
       <motion.img
         src={icon}
         alt="Icon"
