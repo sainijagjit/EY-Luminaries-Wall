@@ -3,7 +3,7 @@
   cursor: pointer;
   transition:
     box-shadow 260ms ease,
-    transform 260ms ease;
+    transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,7 +18,7 @@
 }
 
 .figure-container.selected {
-  transform: scale(1.45);
+  animation: selected-scale 4800ms ease-in-out infinite;
   z-index: 15;
 }
 
@@ -74,10 +74,11 @@
 
 .figure-outline {
   position: absolute;
-  inset: -2px;
+  inset: -6px;
   border: none;
   border-radius: 2px;
   pointer-events: none;
+  z-index: 2;
 }
 
 .interactive-display.guidance
@@ -102,5 +103,27 @@
   }
   50% {
     box-shadow: 0 0 24px 0 rgba(255, 212, 0, 0.45);
+  }
+}
+
+@keyframes selected-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.08);
+  }
+  50% {
+    box-shadow:
+      0 0 40px 0 rgba(255, 255, 255, 0.32),
+      0 0 90px 0 rgba(255, 212, 0, 0.2);
+  }
+}
+
+@keyframes selected-scale {
+  0%,
+  100% {
+    transform: scale(1.22);
+  }
+  50% {
+    transform: scale(1.3);
   }
 }
