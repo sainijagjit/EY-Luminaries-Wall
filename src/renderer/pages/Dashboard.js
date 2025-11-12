@@ -13,7 +13,25 @@ export default function Dashboard() {
         position: 'relative',
         overflow: 'hidden',
         zIndex: 10,
+        backgroundColor: 'red',
+        display: 'flex',
       }}
-    ></motion.div>
+    >
+      <div
+        style={{
+          display: 'flex',
+          flex: 1,
+          flexDirection: 'row',
+          gap: '1rem',
+          backgroundColor: 'blue',
+          alignSelf: 'end',
+          justifyContent: 'space-evenly',
+        }}
+      >
+        <div>sdsdsd</div>
+        <div>sdsdsd</div>
+        <div>sdsdsd</div>
+      </div>
+    </motion.div>
   );
 }
