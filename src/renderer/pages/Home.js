@@ -1,13 +1,26 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import icon from '../../../assets/icon.png';
 import Dashboard from './Dashboard';
 import particlesVideo from '../../../assets/Particles_loop.mp4';
 import backgroundMusic from '../../../assets/Satie-Trois Gymnopedies.mp3';
+import { useInactivityTimer } from '../hooks/useInactivityTimer';
+import {
+  AUDIO_VOLUME,
+  LOGO_ANIMATION_DURATION,
+  LOGO_SCALE,
+} from '../utils/homeUtils';
 
 function Home() {
   const [clicked, setClicked] = useState(false);
   const [logoAnimationComplete, setLogoAnimationComplete] = useState(false);
+
+  const resetToHome = useCallback(() => {
+    setClicked(false);
+    setLogoAnimationComplete(false);
+  }, []);
+
+  useInactivityTimer(clicked, resetToHome);
 
   return (
     <div
@@ -41,7 +54,7 @@ function Home() {
         loop
         preload="auto"
         onLoadedMetadata={(e) => {
-          e.target.volume = 0.2;
+          e.target.volume = AUDIO_VOLUME;
         }}
         style={{ display: 'none' }}
       />
@@ -68,9 +81,9 @@ function Home() {
                 left: '2rem',
                 x: 0,
                 y: 0,
-                scale: 0.8,
+                scale: LOGO_SCALE,
                 transition: {
-                  duration: 1.2,
+                  duration: LOGO_ANIMATION_DURATION,
                   ease: 'easeInOut',
                   onComplete: () => setLogoAnimationComplete(true),
                 },
