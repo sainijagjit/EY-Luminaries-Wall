@@ -174,13 +174,18 @@ export default function Dashboard() {
           position: 'relative',
         }}
       >
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {playingCharacter && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
+              key={playingCharacter.id}
+              initial={{ opacity: 0, rotate: 90 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                duration: 0.8,
+                ease: [0.34, 1.56, 0.64, 1],
+                exit: { duration: 0.3 },
+              }}
               style={{
                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
                 padding: '1.5rem',
@@ -189,6 +194,7 @@ export default function Dashboard() {
                 maxWidth: '767px',
                 boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
                 backdropFilter: 'blur(10px)',
+                transformOrigin: 'top left',
               }}
             >
               <p
