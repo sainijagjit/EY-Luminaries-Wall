@@ -158,21 +158,69 @@ export default function Dashboard() {
   };
 
   const renderCharacterGroup = (group, groupIndex) => {
+    const playingCharacterId = playingVideos[groupIndex];
+    const playingCharacter = group.find(
+      (char) => char.id === playingCharacterId,
+    );
+
     return (
       <div
         key={groupIndex}
         style={{
           display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'flex-end',
-          borderRadius: '8px',
+          flexDirection: 'column',
+          alignItems: 'center',
           flex: 1,
-          justifyContent: 'center',
+          position: 'relative',
         }}
       >
-        {group.map((character, index) =>
-          renderCharacterImage(character, index, groupIndex),
-        )}
+        <AnimatePresence>
+          {playingCharacter && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                padding: '1.5rem',
+                borderRadius: '12px',
+                marginBottom: '2rem',
+                maxWidth: '767px',
+                boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
+                backdropFilter: 'blur(10px)',
+              }}
+            >
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: '0.95rem',
+                  lineHeight: '1.6',
+                  color: '#555',
+                  textAlign: 'left',
+                }}
+              >
+                <strong style={{ color: '#2e2e2e' }}>
+                  {playingCharacter.name}
+                </strong>{' '}
+                — {playingCharacter.description}
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'flex-end',
+            borderRadius: '8px',
+            justifyContent: 'center',
+          }}
+        >
+          {group.map((character, index) =>
+            renderCharacterImage(character, index, groupIndex),
+          )}
+        </div>
       </div>
     );
   };
@@ -195,9 +243,10 @@ export default function Dashboard() {
         style={{
           display: 'flex',
           width: '100%',
+          height: '100%',
           flexDirection: 'row',
           gap: '1.5vw',
-          padding: '0 2vw',
+          paddingInline: '2vw',
           justifyContent: 'space-evenly',
           alignItems: 'flex-end',
         }}
