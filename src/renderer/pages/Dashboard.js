@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ANIMATION_INTERVAL,
   generateRandomIndices,
@@ -17,6 +17,16 @@ import alexanderHamilton from '../../../assets/figures/static_pngs/Alexander Ham
 import jensenHuang from '../../../assets/figures/static_pngs/Jensen Huang.png';
 import jenniferDoudna from '../../../assets/figures/static_pngs/Jennifer Doudna.png';
 
+import alwinErnstVideo from '../../../assets/figures/wenM/Alwin C Ernst_anim.webm';
+import satyaNadellaVideo from '../../../assets/figures/wenM/Satya Nadella_anim.webm';
+import arthurYoungVideo from '../../../assets/figures/wenM/Arthur Young_anim.webm';
+import marieCurieVideo from '../../../assets/figures/wenM/Marie Curie_anim.webm';
+import albertEinsteinVideo from '../../../assets/figures/wenM/Albert Einstein_anim.webm';
+import thomasEdisonVideo from '../../../assets/figures/wenM/Thomas Edison_anim.webm';
+import alexanderHamiltonVideo from '../../../assets/figures/wenM/Alexander Hamilton_anim.webm';
+import jensenHuangVideo from '../../../assets/figures/wenM/Jensen Huang_anim.webm';
+import jenniferDoudnaVideo from '../../../assets/figures/wenM/Jennifer Doudna_anim.webm';
+
 const IMAGE_MAP = {
   'Alwin C Ernst.png': alwinErnst,
   'Satya Nadella.png': satyaNadella,
@@ -29,11 +39,29 @@ const IMAGE_MAP = {
   'Jennifer Doudna.png': jenniferDoudna,
 };
 
+const VIDEO_MAP = {
+  'Alwin C Ernst_anim.webm': alwinErnstVideo,
+  'Satya Nadella_anim.webm': satyaNadellaVideo,
+  'Arthur Young_anim.webm': arthurYoungVideo,
+  'Marie Curie_anim.webm': marieCurieVideo,
+  'Albert Einstein_anim.webm': albertEinsteinVideo,
+  'Thomas Edison_anim.webm': thomasEdisonVideo,
+  'Alexander Hamilton_anim.webm': alexanderHamiltonVideo,
+  'Jensen Huang_anim.webm': jensenHuangVideo,
+  'Jennifer Doudna_anim.webm': jenniferDoudnaVideo,
+};
+
 export default function Dashboard() {
   const characterGroups = getCharacterGroups();
+
   const [activeIndices, setActiveIndices] = useState(
     generateRandomIndices(characterGroups.length),
   );
+  const [playingVideos, setPlayingVideos] = useState({
+    0: null,
+    1: null,
+    2: null,
+  });
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -43,9 +71,18 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, [characterGroups.length]);
 
+  const handleCharacterClick = (characterId, groupIndex) => {
+    setPlayingVideos((prev) => ({
+      ...prev,
+      [groupIndex]: prev[groupIndex] === characterId ? null : characterId,
+    }));
+  };
+
   const renderCharacterImage = (character, index, groupIndex) => {
     const isActive = activeIndices[groupIndex] === index;
     const imageSrc = IMAGE_MAP[character.staticImage];
+    const videoSrc = VIDEO_MAP[character.video];
+    const isPlayingVideo = playingVideos[groupIndex] === character.id;
 
     return (
       <div
@@ -59,25 +96,63 @@ export default function Dashboard() {
           position: 'relative',
         }}
       >
-        <motion.img
-          src={imageSrc}
-          alt={character.name}
-          animate={{
-            filter: isActive ? 'grayscale(0%)' : 'grayscale(100%)',
-          }}
-          transition={{
-            duration: 0.8,
-            ease: 'easeInOut',
-          }}
-          style={{
-            maxHeight: 'min(415px, 38vh)',
-            height: 'auto',
-            width: 'auto',
-            maxWidth: '100%',
-            objectFit: 'contain',
-            display: 'block',
-          }}
-        />
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          <motion.img
+            src={imageSrc}
+            alt={character.name}
+            onClick={() => handleCharacterClick(character.id, groupIndex)}
+            animate={{
+              opacity: isPlayingVideo ? 0 : 1,
+              filter: isActive ? 'grayscale(0%)' : 'grayscale(100%)',
+            }}
+            transition={{
+              opacity: { duration: 1.5, ease: [0.43, 0.13, 0.23, 0.96] },
+              filter: { duration: 0.8, ease: 'easeInOut' },
+            }}
+            style={{
+              maxHeight: 'min(415px, 38vh)',
+              height: 'auto',
+              width: 'auto',
+              maxWidth: '100%',
+              objectFit: 'contain',
+              display: 'block',
+              cursor: 'pointer',
+            }}
+          />
+          <AnimatePresence>
+            {isPlayingVideo && (
+              <motion.video
+                key={`video-${character.id}`}
+                src={videoSrc}
+                autoPlay
+                loop
+                muted
+                onClick={() => handleCharacterClick(character.id, groupIndex)}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{
+                  duration: 1.5,
+                  ease: [0.43, 0.13, 0.23, 0.96],
+                }}
+                style={{
+                  maxHeight: 'min(415px, 38vh)',
+                  height: 'auto',
+                  width: 'auto',
+                  maxWidth: '100%',
+                  objectFit: 'contain',
+                  display: 'block',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  cursor: 'pointer',
+                  pointerEvents: 'auto',
+                }}
+              />
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     );
   };
