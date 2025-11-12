@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import characters from '../constants/characters.json';
+import {
+  ANIMATION_INTERVAL,
+  generateRandomIndices,
+  getCharacterZIndex,
+  getCharacterGroups,
+} from './dashboardUtils';
 
 import alwinErnst from '../../../assets/figures/static_pngs/Alwin C Ernst.png';
 import satyaNadella from '../../../assets/figures/static_pngs/Satya Nadella.png';
@@ -12,24 +17,90 @@ import alexanderHamilton from '../../../assets/figures/static_pngs/Alexander Ham
 import jensenHuang from '../../../assets/figures/static_pngs/Jensen Huang.png';
 import jenniferDoudna from '../../../assets/figures/static_pngs/Jennifer Doudna.png';
 
+const IMAGE_MAP = {
+  'Alwin C Ernst.png': alwinErnst,
+  'Satya Nadella.png': satyaNadella,
+  'Arthur Young.png': arthurYoung,
+  'Marie Curie.png': marieCurie,
+  'Albert Einstein.png': albertEinstein,
+  'Thomas Edison.png': thomasEdison,
+  'Alexander Hamilton.png': alexanderHamilton,
+  'Jensen Huang.png': jensenHuang,
+  'Jennifer Doudna.png': jenniferDoudna,
+};
+
 export default function Dashboard() {
-  const imageMap = {
-    'Alwin C Ernst.png': alwinErnst,
-    'Satya Nadella.png': satyaNadella,
-    'Arthur Young.png': arthurYoung,
-    'Marie Curie.png': marieCurie,
-    'Albert Einstein.png': albertEinstein,
-    'Thomas Edison.png': thomasEdison,
-    'Alexander Hamilton.png': alexanderHamilton,
-    'Jensen Huang.png': jensenHuang,
-    'Jennifer Doudna.png': jenniferDoudna,
+  const characterGroups = getCharacterGroups();
+  const [activeIndices, setActiveIndices] = useState(
+    generateRandomIndices(characterGroups.length),
+  );
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndices(generateRandomIndices(characterGroups.length));
+    }, ANIMATION_INTERVAL);
+
+    return () => clearInterval(interval);
+  }, [characterGroups.length]);
+
+  const renderCharacterImage = (character, index, groupIndex) => {
+    const isActive = activeIndices[groupIndex] === index;
+    const imageSrc = IMAGE_MAP[character.staticImage];
+
+    return (
+      <div
+        key={character.id}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          marginLeft: index > 0 ? '-110px' : '0',
+          zIndex: getCharacterZIndex(index),
+          position: 'relative',
+        }}
+      >
+        <motion.img
+          src={imageSrc}
+          alt={character.name}
+          animate={{
+            filter: isActive ? 'grayscale(0%)' : 'grayscale(100%)',
+          }}
+          transition={{
+            duration: 0.8,
+            ease: 'easeInOut',
+          }}
+          style={{
+            maxHeight: 'min(415px, 38vh)',
+            height: 'auto',
+            width: 'auto',
+            maxWidth: '100%',
+            objectFit: 'contain',
+            display: 'block',
+          }}
+        />
+      </div>
+    );
   };
 
-  const characterGroups = [
-    characters.slice(0, 3),
-    characters.slice(3, 6),
-    characters.slice(6, 9),
-  ];
+  const renderCharacterGroup = (group, groupIndex) => {
+    return (
+      <div
+        key={groupIndex}
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'flex-end',
+          borderRadius: '8px',
+          flex: 1,
+          justifyContent: 'center',
+        }}
+      >
+        {group.map((character, index) =>
+          renderCharacterImage(character, index, groupIndex),
+        )}
+      </div>
+    );
+  };
 
   return (
     <motion.div
@@ -56,46 +127,7 @@ export default function Dashboard() {
           alignItems: 'flex-end',
         }}
       >
-        {characterGroups.map((group, groupIndex) => (
-          <div
-            key={groupIndex}
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'flex-end',
-              borderRadius: '8px',
-              flex: 1,
-              justifyContent: 'center',
-            }}
-          >
-            {group.map((character, index) => (
-              <div
-                key={character.id}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  marginLeft: index > 0 ? '-110px' : '0',
-                  zIndex: index === 1 ? 3 : index === 0 ? 1 : 2,
-                  position: 'relative',
-                }}
-              >
-                <img
-                  src={imageMap[character.staticImage]}
-                  alt={character.name}
-                  style={{
-                    maxHeight: 'min(415px, 38vh)',
-                    height: 'auto',
-                    width: 'auto',
-                    maxWidth: '100%',
-                    objectFit: 'contain',
-                    display: 'block',
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-        ))}
+        {characterGroups.map(renderCharacterGroup)}
       </div>
     </motion.div>
   );
