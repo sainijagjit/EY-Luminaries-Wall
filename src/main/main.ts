@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, screen } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -63,6 +63,13 @@ const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
   }
+  const { width: screenWidth, height: screenHeight } =
+    screen.getPrimaryDisplay().workAreaSize;
+  // Calculate height based on 16:6 aspect ratio
+  const height = Math.round(screenWidth * (6 / 16));
+
+  // Center the window vertically
+  const y = Math.round((screenHeight - height) / 2);
 
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
@@ -72,18 +79,19 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
+  const { width: workWidth, height: workHeight } =
+    screen.getPrimaryDisplay().workAreaSize;
+
   mainWindow = new BrowserWindow({
-    show: false,
-    width: 3840,
-    height: 1200,
-    minWidth: 3840,
-    maxWidth: 3840,
-    minHeight: 1200,
-    maxHeight: 1200,
-    resizable: false,
-    maximizable: false,
-    minimizable: false,
-    fullscreenable: false,
+    x: 0,
+    y,
+    width: screenWidth,
+    height,
+    frame: true,
+    resizable: true,
+    maximizable: true,
+    minimizable: true,
+    fullscreenable: true,
     fullscreen: false,
     icon: getAssetPath('icon.png'),
     webPreferences: {
