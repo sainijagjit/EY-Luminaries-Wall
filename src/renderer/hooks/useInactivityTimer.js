@@ -1,41 +1,40 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
-const INACTIVITY_TIMEOUT = 300000;
+const INACTIVITY_TIMEOUT = 60000;
 
 export function useInactivityTimer(isActive, onInactive) {
-  const inactivityTimerRef = useRef(null);
-  const onInactiveRef = useRef(onInactive);
+	const inactivityTimerRef = useRef(null);
+	const onInactiveRef = useRef(onInactive);
 
-  useEffect(() => {
-    onInactiveRef.current = onInactive;
-  }, [onInactive]);
+	useEffect(() => {
+		onInactiveRef.current = onInactive;
+	}, [onInactive]);
 
-  useEffect(() => {
-    if (!isActive) return;
+	useEffect(() => {
+		if (!isActive) return;
 
-    const resetTimer = () => {
-      if (inactivityTimerRef.current) {
-        clearTimeout(inactivityTimerRef.current);
-      }
-      inactivityTimerRef.current = setTimeout(() => {
-        onInactiveRef.current();
-      }, INACTIVITY_TIMEOUT);
-    };
+		const resetTimer = () => {
+			if (inactivityTimerRef.current) {
+				clearTimeout(inactivityTimerRef.current);
+			}
+			inactivityTimerRef.current = setTimeout(() => {
+				onInactiveRef.current();
+			}, INACTIVITY_TIMEOUT);
+		};
 
-    resetTimer();
+		resetTimer();
 
-    const handleClick = () => {
-      resetTimer();
-    };
+		const handleClick = () => {
+			resetTimer();
+		};
 
-    window.addEventListener('click', handleClick);
+		window.addEventListener("click", handleClick);
 
-    return () => {
-      window.removeEventListener('click', handleClick);
-      if (inactivityTimerRef.current) {
-        clearTimeout(inactivityTimerRef.current);
-      }
-    };
-  }, [isActive]);
+		return () => {
+			window.removeEventListener("click", handleClick);
+			if (inactivityTimerRef.current) {
+				clearTimeout(inactivityTimerRef.current);
+			}
+		};
+	}, [isActive]);
 }
-

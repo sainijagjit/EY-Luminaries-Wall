@@ -66,7 +66,7 @@ const createWindow = async () => {
   const { width: screenWidth, height: screenHeight } =
     screen.getPrimaryDisplay().workAreaSize;
   // Calculate height based on 16:6 aspect ratio
-  const height = Math.round(screenWidth * (6 / 16));
+  const height = Math.round(screenWidth * (5 / 16));
 
   // Center the window vertically
   const y = Math.round((screenHeight - height) / 2);
