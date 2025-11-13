@@ -48,7 +48,7 @@ function Home() {
 			>
 				<source src={particlesVideo} type="video/mp4" />
 			</video>
-			<audio
+			{/* <audio
 				src={backgroundMusic}
 				autoPlay
 				loop
@@ -57,7 +57,7 @@ function Home() {
 					e.target.volume = AUDIO_VOLUME;
 				}}
 				style={{ display: "none" }}
-			/>
+			/> */}
 			<motion.img
 				src={icon}
 				alt="Icon"

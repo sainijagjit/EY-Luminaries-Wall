@@ -90,7 +90,7 @@ export default function Dashboard({ logoAnimationComplete }) {
 					display: "flex",
 					flexDirection: "column",
 					alignItems: "center",
-					marginLeft: index > 0 ? "-13.5%" : "0",
+					marginLeft: index > 0 ? "-10.5%" : "0",
 					zIndex: getCharacterZIndex(index, isPlayingVideo),
 					position: "relative",
 				}}
@@ -128,7 +128,7 @@ export default function Dashboard({ logoAnimationComplete }) {
 								muted
 								onClick={() => handleCharacterClick(character.id, groupIndex)}
 								initial={{ opacity: 0, scale: 0.95, x: "-50%", y: "-50%" }}
-								animate={{ opacity: 1, scale: 1.35, x: "-50%", y: "-60%" }}
+								animate={{ opacity: 1, scale: 1.38, x: "-50%", y: "-65%" }}
 								exit={{ opacity: 0, scale: 0.95, x: "-50%", y: "-50%" }}
 								transition={{
 									duration: 1.5,
@@ -198,7 +198,7 @@ export default function Dashboard({ logoAnimationComplete }) {
 								backgroundColor: "rgba(255, 255, 255, 0.95)",
 								padding: "1.5rem",
 								borderRadius: "12px",
-								marginBottom: "5rem",
+								marginBottom: "3rem",
 								maxWidth: "767px",
 								boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
 								backdropFilter: "blur(10px)",
@@ -208,7 +208,7 @@ export default function Dashboard({ logoAnimationComplete }) {
 							<p
 								style={{
 									margin: 0,
-									fontSize: "0.95rem",
+									fontSize: "0.85rem",
 									lineHeight: "1.35",
 									color: "#555",
 									textAlign: "left",
