@@ -95,7 +95,7 @@ const createWindow = async () => {
     width: workWidth,
     height: workHeight,
     frame: true,
-    resizable: false,
+    resizable: true,
     maximizable: true,
     minimizable: true,
     fullscreenable: true,
