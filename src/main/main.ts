@@ -65,11 +65,11 @@ const createWindow = async () => {
   }
   const { width: screenWidth, height: screenHeight } =
     screen.getPrimaryDisplay().workAreaSize;
-  // Calculate height based on 16:6 aspect ratio
+  // Calculate height based on 16:5aspect ratio
   const height = Math.round(screenWidth * (5 / 16));
 
   // Center the window vertically
-  const y = Math.round((screenHeight - height) / 2);
+  const y = Math.round(screenHeight - height);
 
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
@@ -82,13 +82,20 @@ const createWindow = async () => {
   const { width: workWidth, height: workHeight } =
     screen.getPrimaryDisplay().workAreaSize;
 
+  const targetWidth = 3840;
+  const targetHeight = 1200;
+  const zoomFactor = Math.min(
+    workWidth / targetWidth,
+    workHeight / targetHeight,
+  );
+
   mainWindow = new BrowserWindow({
     x: 0,
     y,
-    width: screenWidth,
-    height,
+    width: workWidth,
+    height: workHeight,
     frame: true,
-    resizable: true,
+    resizable: false,
     maximizable: true,
     minimizable: true,
     fullscreenable: true,
@@ -98,6 +105,7 @@ const createWindow = async () => {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
+      zoomFactor: zoomFactor,
     },
   });
 

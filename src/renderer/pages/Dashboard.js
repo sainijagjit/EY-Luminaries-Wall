@@ -1,14 +1,5 @@
-import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
-import albertEinstein from "../../../assets/figures/static_pngs/Albert Einstein.png";
-import alexanderHamilton from "../../../assets/figures/static_pngs/Alexander Hamilton.png";
-import alwinErnst from "../../../assets/figures/static_pngs/Alwin C Ernst.png";
-import arthurYoung from "../../../assets/figures/static_pngs/Arthur Young.png";
-import jenniferDoudna from "../../../assets/figures/static_pngs/Jennifer Doudna.png";
-import jensenHuang from "../../../assets/figures/static_pngs/Jensen Huang.png";
-import marieCurie from "../../../assets/figures/static_pngs/Marie Curie.png";
-import satyaNadella from "../../../assets/figures/static_pngs/Satya Nadella.png";
-import thomasEdison from "../../../assets/figures/static_pngs/Thomas Edison.png";
+import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import albertEinsteinVideo from "../../../assets/figures/wenM/Albert Einstein_anim.webm";
 import alexanderHamiltonVideo from "../../../assets/figures/wenM/Alexander Hamilton_anim.webm";
 import alwinErnstVideo from "../../../assets/figures/wenM/Alwin C Ernst_anim.webm";
@@ -26,18 +17,6 @@ import {
 	getCharacterZIndex,
 } from "../utils/dashboardUtils";
 
-const IMAGE_MAP = {
-	"Alwin C Ernst.png": alwinErnst,
-	"Satya Nadella.png": satyaNadella,
-	"Arthur Young.png": arthurYoung,
-	"Marie Curie.png": marieCurie,
-	"Albert Einstein.png": albertEinstein,
-	"Thomas Edison.png": thomasEdison,
-	"Alexander Hamilton.png": alexanderHamilton,
-	"Jensen Huang.png": jensenHuang,
-	"Jennifer Doudna.png": jenniferDoudna,
-};
-
 const VIDEO_MAP = {
 	"Alwin C Ernst_anim.webm": alwinErnstVideo,
 	"Satya Nadella_anim.webm": satyaNadellaVideo,
@@ -52,6 +31,7 @@ const VIDEO_MAP = {
 
 export default function Dashboard({ logoAnimationComplete }) {
 	const characterGroups = getCharacterGroups();
+	const videoRefs = useRef({});
 
 	const [activeIndices, setActiveIndices] = useState(
 		generateRandomIndices(characterGroups.length),
@@ -70,16 +50,47 @@ export default function Dashboard({ logoAnimationComplete }) {
 		return () => clearInterval(interval);
 	}, [characterGroups.length]);
 
+	const scaleDownAndStop = (characterId) => {
+		const video = videoRefs.current[characterId];
+		if (!video) return;
+		setTimeout(
+			() => {
+				video.pause();
+				video.currentTime = 0;
+			},
+			(video.duration - video.currentTime) * 1000,
+		);
+	};
+
 	const handleCharacterClick = (characterId, groupIndex) => {
-		setPlayingVideos((prev) => ({
-			...prev,
-			[groupIndex]: prev[groupIndex] === characterId ? null : characterId,
-		}));
+		const previousPlayingId = playingVideos[groupIndex];
+		if (previousPlayingId) scaleDownAndStop(previousPlayingId);
+		const video = videoRefs.current[characterId];
+		if (!video) return;
+		// If clicking the same character, stop it
+		if (previousPlayingId === characterId)
+			setPlayingVideos((prev) => ({
+				...prev,
+				[groupIndex]: null,
+			}));
+		else {
+			if (previousPlayingId)
+				setPlayingVideos((prev) => ({
+					...prev,
+					[groupIndex]: characterId,
+				}));
+			else {
+				setPlayingVideos((prev) => ({
+					...prev,
+					[groupIndex]: characterId,
+				}));
+			}
+			video.play();
+		}
 	};
 
 	const renderCharacterImage = (character, index, groupIndex) => {
 		const isActive = activeIndices[groupIndex] === index;
-		const imageSrc = IMAGE_MAP[character.staticImage];
 		const videoSrc = VIDEO_MAP[character.video];
 		const isPlayingVideo = playingVideos[groupIndex] === character.id;
 
@@ -95,63 +106,44 @@ export default function Dashboard({ logoAnimationComplete }) {
 					position: "relative",
 				}}
 			>
-				<div style={{ position: "relative", width: "100%", height: "100%" }}>
-					<motion.img
-						src={imageSrc}
-						alt={character.name}
-						onClick={() => handleCharacterClick(character.id, groupIndex)}
-						animate={{
-							opacity: isPlayingVideo ? 0 : 1,
-							filter: isActive ? "grayscale(0%)" : "grayscale(100%)",
-						}}
-						transition={{
-							opacity: { duration: 1.5, ease: [0.43, 0.13, 0.23, 0.96] },
-							filter: { duration: 0.8, ease: "easeInOut" },
-						}}
-						style={{
-							maxHeight: "min(415px, 38vh)",
-							height: "auto",
-							width: "auto",
-							maxWidth: "100%",
-							objectFit: "contain",
-							display: "block",
-							cursor: "pointer",
-						}}
-					/>
-					<AnimatePresence>
-						{isPlayingVideo && (
-							<motion.video
-								key={`video-${character.id}`}
-								src={videoSrc}
-								autoPlay
-								loop
-								muted
-								onClick={() => handleCharacterClick(character.id, groupIndex)}
-								initial={{ opacity: 0, scale: 0.95, x: "-50%", y: "-50%" }}
-								animate={{ opacity: 1, scale: 1.38, x: "-50%", y: "-65%" }}
-								exit={{ opacity: 0, scale: 0.95, x: "-50%", y: "-50%" }}
-								transition={{
-									duration: 1.5,
-									ease: [0.43, 0.13, 0.23, 0.96],
-								}}
-								style={{
-									maxHeight: "min(415px, 38vh)",
-									height: "auto",
-									width: "auto",
-									maxWidth: "100%",
-									objectFit: "contain",
-									display: "block",
-									position: "absolute",
-									top: "50%",
-									left: "50%",
-									transformOrigin: "center center",
-									cursor: "pointer",
-									pointerEvents: "auto",
-								}}
-							/>
-						)}
-					</AnimatePresence>
-				</div>
+				<motion.video
+					ref={(el) => {
+						if (el) videoRefs.current[character.id] = el;
+					}}
+					src={videoSrc}
+					muted
+					loop
+					onClick={() => handleCharacterClick(character.id, groupIndex)}
+					animate={{
+						scale: isPlayingVideo ? 1.38 : 1,
+						y: isPlayingVideo ? "-15%" : "0%",
+						filter:
+							isActive && !isPlayingVideo ? "grayscale(0%)" : "grayscale(100%)",
+					}}
+					transition={{
+						scale: {
+							duration: 2,
+							ease: [0.43, 0.13, 0.23, 0.96],
+						},
+						filter: {
+							duration: 0.8,
+							ease: "easeInOut",
+						},
+						y: {
+							duration: 2,
+							ease: [0.43, 0.13, 0.23, 0.96],
+						},
+					}}
+					style={{
+						maxHeight: "min(415px, 38vh)",
+						height: "auto",
+						width: "auto",
+						maxWidth: "100%",
+						objectFit: "contain",
+						display: "block",
+						cursor: "pointer",
+					}}
+				/>
 			</div>
 		);
 	};
@@ -165,10 +157,8 @@ export default function Dashboard({ logoAnimationComplete }) {
 		return (
 			<motion.div
 				key={groupIndex}
-				initial={{ opacity: 0, y: 150 }}
-				animate={
-					logoAnimationComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 150 }
-				}
+				initial={{ opacity: 0 }}
+				animate={logoAnimationComplete ? { opacity: 1 } : { opacity: 0 }}
 				transition={{
 					duration: 1.2,
 					delay: animationDelay,
@@ -180,55 +170,63 @@ export default function Dashboard({ logoAnimationComplete }) {
 					alignItems: "center",
 					flex: 1,
 					position: "relative",
+					height: "100%",
+					gap: "10rem",
+					justifyContent: "flex-end",
 				}}
 			>
-				<AnimatePresence mode="wait">
-					{playingCharacter && (
-						<motion.div
-							key={playingCharacter.id}
-							initial={{ opacity: 0, rotate: 90 }}
-							animate={{ opacity: 1, rotate: 0 }}
-							exit={{ opacity: 0 }}
-							transition={{
-								duration: 0.8,
-								ease: [0.34, 1.56, 0.64, 1],
-								exit: { duration: 0.3 },
-							}}
+				{playingCharacter && (
+					<motion.div
+						key={playingCharacter.id}
+						initial={{ opacity: 0, rotate: 90, scale: 0 }}
+						animate={{ opacity: 1, rotate: 0, scale: 1 }}
+						exit={{ opacity: 0 }}
+						transition={{
+							duration: 1.5,
+							ease: [0.34, 1.56, 0.64, 1],
+							exit: { duration: 0.3 },
+						}}
+						style={{
+							backgroundColor: "rgba(255, 255, 255, 0.95)",
+							padding: "1.5rem",
+							borderRadius: "12px",
+							maxWidth: "767px",
+							boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
+							backdropFilter: "blur(10px)",
+							transformOrigin: "top left",
+						}}
+					>
+						<p
 							style={{
-								backgroundColor: "rgba(255, 255, 255, 0.95)",
-								padding: "1.5rem",
-								borderRadius: "12px",
-								marginBottom: "3rem",
-								maxWidth: "767px",
-								boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
-								backdropFilter: "blur(10px)",
-								transformOrigin: "top left",
+								margin: 0,
+								fontSize: "2rem",
+								color: "#000000",
+								textAlign: "left",
+								fontFamily: "Inter",
+								fontWeight: 400,
 							}}
 						>
-							<p
+							<strong
 								style={{
-									margin: 0,
-									fontSize: "0.85rem",
-									lineHeight: "1.35",
-									color: "#555",
-									textAlign: "left",
+									color: "#000000",
+									fontFamily: "Inter",
+									fontWeight: "bold",
 								}}
 							>
-								<strong style={{ color: "#2e2e2e" }}>
-									{playingCharacter.name}
-								</strong>{" "}
-								— {playingCharacter.description}
-							</p>
-						</motion.div>
-					)}
-				</AnimatePresence>
+								{playingCharacter.name}
+							</strong>{" "}
+							— {playingCharacter.description}
+						</p>
+					</motion.div>
+				)}
+
 				<div
 					style={{
 						display: "flex",
 						flexDirection: "row",
-						alignItems: "flex-end",
+						alignItems: "space-evenly",
 						borderRadius: "8px",
-						justifyContent: "center",
+						justifyContent: "flex-end",
 					}}
 				>
 					{group.map((character, index) =>
