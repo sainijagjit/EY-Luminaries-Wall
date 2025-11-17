@@ -118,7 +118,7 @@ export default function Dashboard({ logoAnimationComplete }) {
 						scale: isPlayingVideo ? 1.38 : 1,
 						y: isPlayingVideo ? "-15%" : "0%",
 						filter:
-							isActive && !isPlayingVideo ? "grayscale(0%)" : "grayscale(100%)",
+							isActive || isPlayingVideo ? "grayscale(0%)" : "grayscale(100%)",
 					}}
 					transition={{
 						scale: {
