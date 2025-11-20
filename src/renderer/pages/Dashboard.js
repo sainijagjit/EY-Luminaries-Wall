@@ -9,6 +9,7 @@ import jensenHuangVideo from "../../../assets/figures/wenM/Jensen Huang_anim.web
 import marieCurieVideo from "../../../assets/figures/wenM/Marie Curie_anim.webm";
 import satyaNadellaVideo from "../../../assets/figures/wenM/Satya Nadella_anim.webm";
 import thomasEdisonVideo from "../../../assets/figures/wenM/Thomas Edison_anim.webm";
+import { useCaricatureInactivityTimer } from "../hooks/useInactivityTimer";
 import {
 	ANIMATION_INTERVAL,
 	GROUP_ANIMATION_DELAYS,
@@ -36,11 +37,13 @@ export default function Dashboard({ logoAnimationComplete }) {
 	const [activeIndices, setActiveIndices] = useState(
 		generateRandomIndices(characterGroups.length),
 	);
-	const [playingVideos, setPlayingVideos] = useState({
+
+	const initialState = {
 		0: null,
 		1: null,
 		2: null,
-	});
+	};
+	const [playingVideos, setPlayingVideos] = useState(initialState);
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -61,6 +64,13 @@ export default function Dashboard({ logoAnimationComplete }) {
 			(video.duration - video.currentTime) * 1000,
 		);
 	};
+
+	const { resetTimer } = useCaricatureInactivityTimer(() => {
+		Object.values(playingVideos).forEach((item) => {
+			if (item !== null) scaleDownAndStop(item);
+		});
+		setPlayingVideos(initialState);
+	});
 
 	const handleCharacterClick = (characterId, groupIndex) => {
 		const previousPlayingId = playingVideos[groupIndex];
@@ -86,6 +96,7 @@ export default function Dashboard({ logoAnimationComplete }) {
 				}));
 			}
 			video.play();
+			resetTimer();
 		}
 	};
 
@@ -101,7 +112,7 @@ export default function Dashboard({ logoAnimationComplete }) {
 					display: "flex",
 					flexDirection: "column",
 					alignItems: "center",
-					marginLeft: index > 0 ? "-10.5%" : "0",
+					marginLeft: index > 0 ? "-10%" : "0",
 					zIndex: getCharacterZIndex(index, isPlayingVideo),
 					position: "relative",
 				}}
@@ -115,8 +126,8 @@ export default function Dashboard({ logoAnimationComplete }) {
 					loop
 					onClick={() => handleCharacterClick(character.id, groupIndex)}
 					animate={{
-						scale: isPlayingVideo ? 1.38 : 1,
-						y: isPlayingVideo ? "-15%" : "0%",
+						scale: isPlayingVideo ? 1.45 : 1,
+						y: isPlayingVideo ? "-22%" : "0%",
 						filter:
 							isActive || isPlayingVideo ? "grayscale(0%)" : "grayscale(100%)",
 					}}
@@ -194,6 +205,7 @@ export default function Dashboard({ logoAnimationComplete }) {
 							boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
 							backdropFilter: "blur(10px)",
 							transformOrigin: "top left",
+							marginBottom: "2.3rem",
 						}}
 					>
 						<p
