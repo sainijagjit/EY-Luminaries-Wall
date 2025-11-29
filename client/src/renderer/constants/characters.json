@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "name": "Alwin C Ernst",
+    "image": "Alwin C Ernst.png",
+    "staticImage": "Alwin C Ernst.png",
+    "video": "Alwin C Ernst_anim.webm",
+    "width": 311,
+    "height": 415,
+    "description": "Co-founder of Ernst & Ernst, Alwin C. Ernst revolutionized accounting by introducing management consulting, turning audits into business strategy tools. His approach helped companies use financial data for growth and efficiency. Ernst's pioneering vision eventually shaped Ernst & Young into one of the world's most influential professional services firms."
+  },
+  {
+    "id": 2,
+    "name": "Satya Nadella",
+    "image": "Satya Nadella.png",
+    "staticImage": "Satya Nadella.png",
+    "video": "Satya Nadella_anim.webm",
+    "width": 240,
+    "height": 415,
+    "description": "As CEO of Microsoft since 2014, Satya Nadella transformed the company's culture and strategy, focusing on empathy, collaboration, and cloud innovation. Under his leadership, Microsoft embraced AI, Azure, and sustainability while regaining its pioneering spirit. Nadella's human-centered leadership turned Microsoft into one of the most valuable and future-ready tech giants."
+  },
+  {
+    "id": 3,
+    "name": "Arthur Young",
+    "image": "Arthur Young.png",
+    "staticImage": "Arthur Young.png",
+    "video": "Arthur Young_anim.webm",
+    "width": 247,
+    "height": 415,
+    "description": "A Scottish-born accountant, Arthur Young co-founded Arthur Young & Co., a firm built on integrity and international cooperation. He believed accountants should be trusted advisors, not just auditors. His dedication to professional standards and education helped shape the global accounting landscape, laying the foundation for today's Ernst & Young."
+  },
+  {
+    "id": 4,
+    "name": "Marie Curie",
+    "image": "Marie Curie.png",
+    "staticImage": "Marie Curie.png",
+    "video": "Marie Curie_anim.webm",
+    "width": 247,
+    "height": 415,
+    "description": "A trailblazing physicist and chemist, Marie Curie discovered radium and polonium, pioneering research in radioactivity. She became the first person to win Nobel Prizes in two scientific fields—Physics and Chemistry. Her groundbreaking work opened doors for women in science and laid the foundation for advances in medicine and nuclear research."
+  },
+  {
+    "id": 5,
+    "name": "Albert Einstein",
+    "image": "Albert Einstein.png",
+    "staticImage": "Albert Einstein.png",
+    "video": "Albert Einstein_anim.webm",
+    "width": 343,
+    "height": 415,
+    "description": "Theoretical physicist Albert Einstein redefined humanity's understanding of space, time, and energy with his theory of relativity. His famous equation, E = mc², unveiled the link between mass and energy. Awarded the Nobel Prize for explaining the photoelectric effect, Einstein's genius reshaped modern physics and inspired generations of scientists worldwide."
+  },
+  {
+    "id": 6,
+    "name": "Thomas Edison",
+    "image": "Thomas Edison.png",
+    "staticImage": "Thomas Edison.png",
+    "video": "Thomas Edison_anim.webm",
+    "width": 262,
+    "height": 415,
+    "description": "Thomas Edison, one of history's greatest inventors, held over a thousand patents, including for the electric light bulb, phonograph, and motion picture camera. His Menlo Park lab pioneered modern industrial research. Edison's relentless experimentation and entrepreneurial drive powered the birth of the electric age and modern technological innovation."
+  },
+  {
+    "id": 7,
+    "name": "Alexander Hamilton",
+    "image": "Alexander Hamilton.png",
+    "staticImage": "Alexander Hamilton.png",
+    "video": "Alexander Hamilton_anim.webm",
+    "width": 282,
+    "height": 415,
+    "description": "Founding Father Alexander Hamilton was the first U.S. Secretary of the Treasury and architect of the nation's financial system. He established the national bank, promoted industrial growth, and championed strong central governance. His forward-thinking vision laid the groundwork for America's economic rise and lasting influence on modern capitalism."
+  },
+  {
+    "id": 8,
+    "name": "Jensen Huang",
+    "image": "Jensen Huang.png",
+    "staticImage": "Jensen Huang.png",
+    "video": "Jensen Huang_anim.webm",
+    "width": 214,
+    "height": 415,
+    "description": "Jensen Huang, co-founder and CEO of NVIDIA, turned a graphics chip company into the engine of the AI revolution. His vision for GPU computing transformed gaming, design, and machine learning. Known for bold innovation and storytelling leadership, Huang's work is driving the next era of computing and artificial intelligence."
+  },
+  {
+    "id": 9,
+    "name": "Jennifer Doudna",
+    "image": "Jennifer Doudna.png",
+    "staticImage": "Jennifer Doudna.png",
+    "video": "Jennifer Doudna_anim.webm",
+    "width": 285,
+    "height": 415,
+    "description": "Biochemist Jennifer Doudna co-invented CRISPR-Cas9, a groundbreaking gene-editing technology that allows scientists to precisely modify DNA. Her discovery revolutionized biology, enabling new treatments for genetic diseases and advances in agriculture. A Nobel Prize winner, Doudna's work raises profound ethical questions about humanity's power to rewrite life itself."
+  }
+]
