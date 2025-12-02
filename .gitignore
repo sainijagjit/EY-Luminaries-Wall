@@ -26,3 +26,10 @@ client/npm-debug.log.*
 client/*.css.d.ts
 client/*.sass.d.ts
 client/*.scss.d.ts
+
+# Python server
+server/.venv
+server/__pycache__/
+server/**/*.pyc
+server/.mypy_cache/
+server/.pytest_cache/
