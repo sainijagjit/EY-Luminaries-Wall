@@ -8,6 +8,12 @@ DATABASE_URL = os.getenv(
     "postgresql://postgres:WOIdCSZbFpeRYAtzqvabjeJNUiQYgMGW@hopper.proxy.rlwy.net:27229/railway",
 )
 
+if DATABASE_URL.startswith("postgresql://"):
+    if "?" not in DATABASE_URL:
+        DATABASE_URL += "?sslmode=require"
+    elif "sslmode" not in DATABASE_URL:
+        DATABASE_URL += "&sslmode=require"
+
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()

@@ -10,7 +10,7 @@ class Visualization(Base):
     id = Column(Integer, primary_key=True)
     title = Column(Text)
     screen_id = Column(Integer, ForeignKey("SCREEN.screen_id"))
-    chart_typ = Column(Text)
+    chart_type = Column(Text)
 
     screen = relationship("Screen", back_populates="visualizations")
     data_sets = relationship("DataSetMapping", back_populates="visualization")
