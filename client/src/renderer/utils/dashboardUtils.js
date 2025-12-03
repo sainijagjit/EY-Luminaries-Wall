@@ -1,5 +1,3 @@
-import characters from "../constants/characters.json";
-
 export const ANIMATION_INTERVAL = 3000;
 export const GROUP_SIZE = 3;
 
@@ -21,10 +19,10 @@ export const getCharacterZIndex = (index, isPlayingVideo) => {
 	return 2;
 };
 
-export const getCharacterGroups = () => {
-	return [
-		characters.slice(0, 3),
-		characters.slice(3, 6),
-		characters.slice(6, 9),
-	];
+export const buildCharacterGroupsFromConfig = (visualizations) => {
+	if (!Array.isArray(visualizations)) return [];
+	return visualizations.map((visualization) => {
+		const firstDataSet = visualization.data_sets?.[0];
+		return firstDataSet?.data_set?.characters || [];
+	});
 };
